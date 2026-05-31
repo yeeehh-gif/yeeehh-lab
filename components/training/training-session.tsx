@@ -6,11 +6,19 @@ import { TranslationExercise } from "./translation-exercise"
 import { ClozeExercise } from "./cloze-exercise"
 import { ComprehensionExercise } from "./comprehension-exercise"
 import { TrainReader } from "@/lib/training/trainer-reader"
+import { TrainWriter } from "@/lib/training/trainer-writer"
+import { TrainSpeaker } from "@/lib/training/trainer-speaker"
 import { captureError } from "@/lib/training/error-backlog"
-import type { TrainingQuestion } from "@/lib/training/types"
+import type { Trainer, TrainingQuestion } from "@/lib/training/types"
 import type { Vocabulary } from "@/types"
 
-export function TrainingSession() {
+const trainers: Record<string, Trainer> = {
+  reading: new TrainReader(),
+  writing: new TrainWriter(),
+  speaking: new TrainSpeaker(),
+}
+
+export function TrainingSession({ category }: { category: "reading" | "writing" | "speaking" }) {
   const [questions, setQuestions] = useState<TrainingQuestion[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -18,12 +26,12 @@ export function TrainingSession() {
   const [feedback, setFeedback] = useState<"correct" | "maybe" | "wrong" | null>(null)
   const [stats, setStats] = useState({ correct: 0, maybe: 0, wrong: 0 })
 
-  const trainer = new TrainReader()
+  const trainer = trainers[category]
 
-  useEffect(() => { fetchQueue() }, [])
+  useEffect(() => { fetchQueue() }, [category])
 
   async function fetchQueue() {
-    const res = await fetch("/api/training/queue?type=reading&limit=10")
+    const res = await fetch(`/api/training/queue?type=${category}&limit=10`)
     const data = await res.json()
     const vocab: Vocabulary[] = data.queue || []
     const qs = trainer.generateQuestions(vocab)
@@ -37,11 +45,11 @@ export function TrainingSession() {
     await fetch("/api/training/record", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ vocabularyId: question.vocabularyId, trainingType: "reading", result }),
+      body: JSON.stringify({ vocabularyId: question.vocabularyId, trainingType: category, result }),
     })
 
     if (result !== "correct") {
-      await captureError({ vocabularyId: question.vocabularyId, errorType: "reading" })
+      await captureError({ vocabularyId: question.vocabularyId, errorType: category })
     }
 
     setStats(prev => ({
@@ -64,10 +72,11 @@ export function TrainingSession() {
   if (loading) return <p className="text-faint text-sm text-center py-20">Loading today&apos;s training...</p>
 
   if (questions.length === 0) {
+    const label = category.charAt(0).toUpperCase() + category.slice(1)
     return (
       <div className="text-center py-20">
         <h2 className="font-[family-name:var(--font-display)] italic text-3xl font-bold text-ink mb-2">All caught up</h2>
-        <p className="text-muted text-sm">No words to review today. Import more notes to build your queue.</p>
+        <p className="text-muted text-sm">No {label.toLowerCase()} words to review today. Import more notes or switch category.</p>
       </div>
     )
   }
@@ -76,7 +85,6 @@ export function TrainingSession() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Progress bar */}
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-semibold text-faint tracking-[1.5px] uppercase">Progress</span>
         <div className="flex gap-2 flex-1">
@@ -87,7 +95,6 @@ export function TrainingSession() {
         <span className="font-mono text-xs text-muted">{currentIndex + 1}/{questions.length}</span>
       </div>
 
-      {/* Exercise */}
       {!complete && (
         <>
           {question.type === "flashcard" && <Flashcard question={question} onAnswer={handleAnswer} />}
@@ -97,7 +104,6 @@ export function TrainingSession() {
         </>
       )}
 
-      {/* Feedback */}
       {feedback && (
         <div className={`text-center py-4 rounded-lg font-bold text-lg ${
           feedback === "correct" ? "bg-[#fdfaee] text-ink border-2 border-ink shadow-[3px_3px_0_#d4cfc4]" : "bg-white text-ink border-2 border-ink shadow-[3px_3px_0_#d4cfc4]"
@@ -106,7 +112,6 @@ export function TrainingSession() {
         </div>
       )}
 
-      {/* Complete */}
       {complete && (
         <div className="text-center py-12 border border-rule rounded-xl bg-white shadow-card-md">
           <h2 className="font-[family-name:var(--font-display)] italic text-3xl font-bold text-ink mb-2">Training complete</h2>
@@ -116,9 +121,7 @@ export function TrainingSession() {
             <div className="text-center"><div className="font-[family-name:var(--font-display)] italic text-3xl font-bold text-[#c4a030]">{stats.maybe}</div><div className="text-xs text-faint">maybe</div></div>
             <div className="text-center"><div className="font-[family-name:var(--font-display)] italic text-3xl font-bold text-[#c44]">{stats.wrong}</div><div className="text-xs text-faint">wrong</div></div>
           </div>
-          <button onClick={() => window.location.reload()} className="bg-charcoal text-white font-bold text-sm py-3 px-8 rounded-lg hover:bg-charcoal/90 transition-colors">
-            Start new session
-          </button>
+          <button onClick={() => window.location.reload()} className="bg-charcoal text-white font-bold text-sm py-3 px-8 rounded-lg hover:bg-charcoal/90 transition-colors">Start new session</button>
         </div>
       )}
     </div>
