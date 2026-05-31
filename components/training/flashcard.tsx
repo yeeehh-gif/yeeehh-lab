@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import type { TrainingQuestion } from "@/lib/training/types"
+import { PronunciationButton } from "./pronunciation-button"
 
 export function Flashcard({
   question,
@@ -28,6 +29,7 @@ export function Flashcard({
           {question.vocabulary.phonetic && (
             <p className="font-mono text-sm text-faint mt-3">{question.vocabulary.phonetic}</p>
           )}
+          <div className="mt-3"><PronunciationButton text={question.prompt} /></div>
           <p className="text-faint text-sm mt-8">Tap to reveal meaning</p>
         </div>
       </div>
@@ -46,6 +48,7 @@ export function Flashcard({
         {question.vocabulary.phonetic && (
           <p className="font-mono text-sm text-faint mb-6">{question.vocabulary.phonetic}</p>
         )}
+        <div className="mt-2 mb-6"><PronunciationButton text={question.prompt} /></div>
         <div className="border-t border-rule pt-6 mt-4">
           <p className="text-sm text-muted mb-2">Definition</p>
           <p className="text-lg font-semibold text-ink">{question.correctAnswer}</p>
