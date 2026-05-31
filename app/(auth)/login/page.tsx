@@ -36,7 +36,7 @@ export default function LoginPage() {
   return (
     <Card className="w-full max-w-sm p-8 shadow-card-md border-rule">
       <h1 className="font-display italic text-2xl font-bold text-ink mb-1">
-        English Lab
+        yeeehh&apos;s lab
       </h1>
       <p className="text-faint text-sm mb-8">Sign in to continue</p>
 

@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "English Lab",
+  title: "yeeehh's lab",
   description: "Your personal English learning companion",
   manifest: "/manifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "English Lab",
+    title: "yeeehh's lab",
   },
 }
 

@@ -28,7 +28,7 @@ export function Sidebar() {
   return (
     <aside className="w-[200px] flex-shrink-0 flex flex-col gap-1 py-8">
       <Link href="/dashboard" className="font-display italic text-[22px] font-semibold text-ink mb-8 px-[10px] tracking-tight no-underline">
-        English Lab
+        yeeehh&apos;s lab
       </Link>
       <nav>
         {navItems.map((group) => (

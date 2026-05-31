@@ -6,7 +6,7 @@ export function HeroCover() {
       {/* Masthead */}
       <div className="flex items-baseline gap-4 pb-5 border-b border-rule">
         <span className="font-display italic text-[26px] font-bold text-ink tracking-tight">
-          English Lab
+          yeeehh&apos;s lab
         </span>
         <span className="font-mono text-[11px] text-faint tracking-wider">
           Issue No. 31 · May 2026
