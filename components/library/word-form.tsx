@@ -48,7 +48,7 @@ export function WordForm({ onSaved }: { onSaved: () => void }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <Button className="bg-charcoal text-white hover:bg-charcoal/90">Add word</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[420px]">
