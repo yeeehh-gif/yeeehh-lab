@@ -1,0 +1,224 @@
+<style>
+  .design-spec { font-size: 12px; color: #888; }
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #aaa; }
+  .spec-table th { background: #1a1a2e; padding: 8px 10px; text-align: left; color: #fff; font-size: 11px; }
+  .spec-table td { padding: 8px 10px; border-bottom: 1px solid #2a2a3e; }
+  .code-badge { background: #1e1e30; color: #888; font-size: 10px; padding: 2px 8px; border-radius: 3px; font-family: monospace; }
+</style>
+
+<h2>🎨 视觉语言系统 · 重定义</h2>
+<p class="subtitle">Style A 轻量漫画点缀 × 圆角卡片体系 × 字体层级驱动</p>
+
+<!-- ===== DESIGN TOKENS ===== -->
+<div class="section">
+  <h3>🔧 Design Tokens 定义</h3>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">全局变量</div>
+  <div class="mockup-body">
+    <table class="spec-table">
+      <tr><th>Token</th><th>值</th><th>用途</th></tr>
+      <tr><td><code>--radius-card</code></td><td>16px</td><td>所有卡片圆角</td></tr>
+      <tr><td><code>--radius-sm</code></td><td>10px</td><td>按钮/小元素圆角</td></tr>
+      <tr><td><code>--shadow-card</code></td><td>0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03)</td><td>毛玻璃极弱投影</td></tr>
+      <tr><td><code>--shadow-elevated</code></td><td>0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04)</td><td>悬停/激活态投影</td></tr>
+      <tr><td><code>--color-bg</code></td><td>#faf8f4</td><td>页面底色</td></tr>
+      <tr><td><code>--color-surface</code></td><td>#ffffff</td><td>卡片底色</td></tr>
+      <tr><td><code>--color-text-primary</code></td><td>#1a1a1a</td><td>主标题</td></tr>
+      <tr><td><code>--color-text-body</code></td><td>#555555</td><td>正文</td></tr>
+      <tr><td><code>--color-text-muted</code></td><td>#999999</td><td>辅助文字</td></tr>
+      <tr><td><code>--color-accent</code></td><td>#f0c040</td><td>金色强调（极克制使用）</td></tr>
+      <tr><td><code>--color-border</code></td><td>#e8e4dc</td><td>卡片边界</td></tr>
+      <tr><td><code>--font-display</code></td><td>Inter / PingFang SC · Bold 700</td><td>标题</td></tr>
+      <tr><td><code>--font-body</code></td><td>Inter / PingFang SC · Regular 400</td><td>正文</td></tr>
+      <tr><td><code>--font-mono</code></td><td>JetBrains Mono / SF Mono</td><td>音标/数据</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== TRAINING PAGE MOCKUP ===== -->
+<div class="section" style="margin-top: 24px">
+  <h3>📱 训练页 · 闪卡模式</h3>
+  <p class="subtitle">阅读训练 — 看到单词 → 回忆 → 翻面 → 自评</p>
+</div>
+
+<!-- MOCKUP: Full training page in new style -->
+<div style="background:#faf8f4;border-radius:20px;overflow:hidden;border:1px solid #e8e4dc">
+
+  <!-- TOP NAV: minimal, typographic -->
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 28px 14px">
+    <div style="display:flex;align-items:baseline;gap:12px">
+      <span style="font-size:18px;font-weight:700;color:#1a1a1a;letter-spacing:-0.4px;font-family:Inter,system-ui,-apple-system,sans-serif">English Lab</span>
+      <span class="code-badge">READING</span>
+    </div>
+    <span style="font-size:12px;font-weight:400;color:#999">Training · In Progress</span>
+  </div>
+
+  <!-- MAIN CONTENT: grid-driven spacing -->
+  <div style="padding:0 28px 28px;display:flex;flex-direction:column;gap:20px">
+
+    <!-- Row: Progress indicator -->
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;font-weight:500;color:#999;letter-spacing:0.5px">PROGRESS</span>
+      <div style="display:flex;gap:8px;flex:1">
+        <div style="height:4px;background:#1a1a1a;border-radius:2px;flex:1"></div>
+        <div style="height:4px;background:#1a1a1a;border-radius:2px;flex:1"></div>
+        <div style="height:4px;background:#1a1a1a;border-radius:2px;flex:1"></div>
+        <div style="height:4px;background:#e8e4dc;border-radius:2px;flex:1"></div>
+        <div style="height:4px;background:#e8e4dc;border-radius:2px;flex:1"></div>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:#1a1a1a;font-family:monospace">3/5</span>
+    </div>
+
+    <!-- Main word card: THE hero element -->
+    <div style="background:#fff;border:1px solid #e8e4dc;border-radius:16px;padding:56px 32px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">
+      <!-- Category label: tiny, muted -->
+      <div style="font-size:10px;font-weight:500;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Reading · Vocabulary</div>
+      <!-- The word: bold, massive -->
+      <div style="font-size:42px;font-weight:700;color:#1a1a1a;letter-spacing:-0.8px;line-height:1.1;margin-bottom:8px">ubiquitous</div>
+      <!-- Phonetic: mono, subtle -->
+      <div style="font-size:13px;font-weight:400;color:#999;font-family:'SF Mono','JetBrains Mono',monospace;margin-bottom:20px">/juːˈbɪk.wɪ.təs/</div>
+      <!-- Tap hint: ultra minimal -->
+      <div style="display:inline-block;padding:6px 18px;border:1px solid #e8e4dc;border-radius:20px;font-size:11px;color:#bbb;font-weight:400">
+        tap to reveal
+      </div>
+    </div>
+
+    <!-- Self-assessment: 3 clean buttons, hierarchy by weight -->
+    <div style="display:flex;gap:10px">
+      <button style="flex:1;background:#fff;border:1px solid #e8e4dc;border-radius:12px;padding:14px;font-size:13px;font-weight:500;color:#555;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">Not yet</button>
+      <button style="flex:1;background:#fff;border:1px solid #e8e4dc;border-radius:12px;padding:14px;font-size:13px;font-weight:500;color:#555;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">Almost</button>
+      <button style="flex:1;background:#1a1a1a;border:1px solid #1a1a1a;border-radius:12px;padding:14px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">Got it</button>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR: minimal stats -->
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 28px;border-top:1px solid #f0ece4">
+    <span style="font-size:11px;color:#999">⚡ 7-day streak</span>
+    <span style="font-size:11px;color:#999">⏰ Next review · Tomorrow</span>
+  </div>
+</div>
+
+<!-- ===== CARD FLIP STATE ===== -->
+<div class="section" style="margin-top:28px">
+  <h3>🔄 交互状态 · 翻面后（答对反馈）</h3>
+  <p class="subtitle">卡片翻转 → 显示释义 + 例句 → 金色微动效（唯一的漫画残留）</p>
+</div>
+
+<div style="background:#faf8f4;border-radius:20px;overflow:hidden;border:1px solid #e8e4dc;padding:0 28px 28px">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0 14px">
+    <span style="font-size:18px;font-weight:700;color:#1a1a1a;letter-spacing:-0.4px">English Lab</span>
+    <span class="code-badge">READING</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <!-- Progress -->
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;font-weight:500;color:#999">PROGRESS</span>
+      <div style="display:flex;gap:8px;flex:1">
+        <div style="height:4px;background:#1a1a1a;border-radius:2px;flex:1"></div><div style="height:4px;background:#1a1a1a;border-radius:2px;flex:1"></div><div style="height:4px;background:#1a1a1a;border-radius:2px;flex:1"></div><div style="height:4px;background:#e8e4dc;border-radius:2px;flex:1"></div><div style="height:4px;background:#e8e4dc;border-radius:2px;flex:1"></div>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:#1a1a1a;font-family:monospace">3/5</span>
+    </div>
+
+    <!-- Flipped card: rich content but clean layout -->
+    <div style="background:#fff;border:1px solid #e8e4dc;border-radius:16px;padding:40px 32px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">
+      <!-- Word (smaller in flipped state) -->
+      <div style="font-size:28px;font-weight:700;color:#1a1a1a;letter-spacing:-0.5px;margin-bottom:4px">ubiquitous</div>
+      <div style="font-size:12px;color:#999;font-family:monospace;margin-bottom:20px">/juːˈbɪk.wɪ.təs/ &nbsp; adj.</div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:#f0ece4;margin-bottom:20px"></div>
+
+      <!-- Meaning: grid layout -->
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13px;line-height:1.6">
+        <span style="font-weight:500;color:#999">释义</span>
+        <span style="font-weight:400;color:#1a1a1a">无处不在的，普遍存在的</span>
+        <span style="font-weight:500;color:#999">例句</span>
+        <span style="font-weight:400;color:#555">The internet has become <span style="font-weight:600;color:#1a1a1a">ubiquitous</span> in modern life.</span>
+        <span style="font-weight:500;color:#999">笔记</span>
+        <span style="font-weight:400;color:#555">出自 Unit 3: Technology & Society</span>
+      </div>
+
+      <!-- Comic accent: ONLY here - subtle gold star burst on correct -->
+      <div style="margin-top:20px;display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fdfaf2;border-radius:10px;border:1px solid #f0e8d0">
+        <span style="font-size:16px">⭐</span>
+        <span style="font-size:12px;font-weight:500;color:#a08030">Correct! You remembered this one.</span>
+      </div>
+    </div>
+
+    <!-- Navigation: clean -->
+    <div style="display:flex;gap:10px">
+      <button style="flex:1;background:#fff;border:1px solid #e8e4dc;border-radius:10px;padding:14px;font-size:13px;font-weight:500;color:#999;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">← Previous</button>
+      <button style="flex:2;background:#1a1a1a;border:1px solid #1a1a1a;border-radius:10px;padding:14px;font-size:13px;font-weight:600;color:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.03)">Next word →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DESIGN RULES ===== -->
+<div class="section" style="margin-top:28px">
+  <h3>📐 设计规则速查</h3>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-body">
+      <h3>🏗️ 圆角矩形体系</h3>
+      <ul style="font-size:12px;color:#aaa;line-height:1.8">
+        <li>页面容器：<span class="code-badge">20px</span></li>
+        <li>卡片：<span class="code-badge">16px</span></li>
+        <li>按钮：<span class="code-badge">12px</span></li>
+        <li>小标签/徽章：<span class="code-badge">6px</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🌫️ 极弱投影</h3>
+      <ul style="font-size:12px;color:#aaa;line-height:1.8">
+        <li>基础：<span class="code-badge">4% + 3% opacity</span></li>
+        <li>提升：<span class="code-badge">6% + 4%</span></li>
+        <li>不用彩色阴影</li>
+        <li>多图层叠加，模拟毛玻璃</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>📝 字体层级</h3>
+      <ul style="font-size:12px;color:#aaa;line-height:1.8">
+        <li>单词：<span class="code-badge">42px Bold 700</span></li>
+        <li>模块标题：<span class="code-badge">13px Medium 500</span></li>
+        <li>正文：<span class="code-badge">13px Regular 400</span></li>
+        <li>辅助：<span class="code-badge">11px Regular 400</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🎯 漫画残留（极克制）</h3>
+      <ul style="font-size:12px;color:#aaa;line-height:1.8">
+        <li>✅ 答对：金色弱高亮 + ⭐ 图标</li>
+        <li>❌ 答错：无惩罚视觉，仅记录</li>
+        <li>🔥 连续正确：金色微动效</li>
+        <li>其余全部保持干净</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px">
+  <h3>🎯 与之前 B 风格的对比</h3>
+</div>
+<table class="spec-table">
+  <tr><th>维度</th><th>B 平衡融合（旧）</th><th style="color:#f0c040">A 轻量圆角卡片（新）</th></tr>
+  <tr><td>边框</td><td>3px 粗黑边框</td><td style="color:#f0c040">1px 极细暖灰边界</td></tr>
+  <tr><td>阴影</td><td>硬偏移 comic 阴影</td><td style="color:#f0c040">极弱多层毛玻璃投影</td></tr>
+  <tr><td>按钮</td><td>NOPE! / GOT IT!</td><td style="color:#f0c040">Not yet / Almost / Got it</td></tr>
+  <tr><td>漫画元素</td><td>网点纹理、拟声词</td><td style="color:#f0c040">仅正确反馈时金色微提示</td></tr>
+  <tr><td>视觉层级</td><td>漫画边框主导</td><td style="color:#f0c040">字体大小+明暗驱动</td></tr>
+  <tr><td>圆角</td><td>混合</td><td style="color:#f0c040">统一圆角体系 (6/10/12/16/20px)</td></tr>
+</table>

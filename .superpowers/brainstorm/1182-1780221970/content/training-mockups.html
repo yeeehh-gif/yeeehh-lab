@@ -1,0 +1,138 @@
+<style>
+  .mockup-comic-a { --bg: #fafafa; --card: #fff; --border: #222; --accent: #ffd700; --ok: #2d6a4f; --err: #e94560; --text: #1a1a1a; --sub: #666; }
+  .mockup-comic-b { --bg: #f5f0eb; --card: #fffef9; --border: #1a1a1a; --accent: #ff6b35; --ok: #006d77; --err: #d62828; --text: #1a1a1a; --sub: #555; }
+  .mockup-comic-c { --bg: #e8e0d5; --card: #fffcf0; --border: #111; --accent: #ff3c38; --ok: #1b4332; --err: #c1121f; --text: #111; --sub: #444; }
+  .mockup-frame { border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+  .mockup-topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; font-size: 13px; font-weight: 600; }
+  .mockup-body { padding: 20px 24px 28px; }
+  .progress-dots { display: flex; gap: 6px; }
+  .progress-dot { width: 28px; height: 6px; border-radius: 3px; }
+  .comic-border { border: 3px solid var(--border); border-radius: 10px; box-shadow: 4px 4px 0 rgba(0,0,0,0.08); }
+  .comic-border-b { border: 3px solid var(--border); border-radius: 12px; box-shadow: 5px 5px 0 #ccc; }
+  .halftone { background-image: radial-gradient(circle, #00000018 1px, transparent 1px); background-size: 8px 8px; }
+  .btn { padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; color: #fff; }
+  .speech-bubble { position: relative; background: #fff; border: 2px solid #222; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 700; display: inline-block; }
+  .speech-bubble::after { content: ''; position: absolute; bottom: -8px; left: 20px; width: 12px; height: 8px; background: #fff; border-right: 2px solid #222; border-bottom: 2px solid #222; clip-path: polygon(0 0, 100% 0, 0 100%); }
+</style>
+
+<h2>📱 训练页 · 风格对比</h2>
+<p class="subtitle">场景：阅读训练 — 闪卡模式（看到单词 → 回忆 → 翻面看答案 → 自评）</p>
+
+<!-- ===== STYLE A: Light Comic Accents ===== -->
+<div class="section"><h3>A · 轻量漫画点缀</h3></div>
+<div class="mockup-frame" style="background:var(--mockup-comic-a);border:1px solid #eee">
+  <div style="background:#fafafa;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #222;font-family:monospace">
+    <span style="font-weight:800;font-size:16px;letter-spacing:-0.5px">📖 ENGLISH LAB</span>
+    <span style="font-size:12px;color:#666">阅读训练 · 进行中</span>
+  </div>
+  <div style="padding:20px 24px">
+    <div style="display:flex;gap:6px;margin-bottom:20px">
+      <div class="progress-dot" style="background:#222;width:28px;height:6px;border-radius:3px"></div><div class="progress-dot" style="background:#222;width:28px;height:6px;border-radius:3px"></div><div class="progress-dot" style="background:#222;width:28px;height:6px;border-radius:3px"></div><div class="progress-dot" style="background:#eee;width:28px;height:6px;border-radius:3px;border:1.5px solid #ccc"></div><div class="progress-dot" style="background:#eee;width:28px;height:6px;border-radius:3px;border:1.5px solid #ccc"></div>
+      <span style="font-size:11px;color:#666;margin-left:6px">3/5</span>
+    </div>
+    <div style="background:#fff;border:2px solid #ddd;border-radius:12px;padding:40px 20px;text-align:center;margin-bottom:16px">
+      <div style="font-size:11px;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📖 阅读理解</div>
+      <div style="font-size:28px;font-weight:800;color:#1a1a1a;margin-bottom:4px">ubiquitous</div>
+      <div style="font-size:13px;color:#888">点击翻看释义</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" style="background:#e94560">✗ 不认识</button>
+      <button class="btn" style="background:#f77f00">◐ 有点模糊</button>
+      <button class="btn" style="background:#2d6a4f">✓ 认识</button>
+    </div>
+    <!-- Light comic accent: just a tiny star burst tag -->
+    <div style="text-align:center;margin-top:12px">
+      <span style="font-size:10px;color:#f77f00;font-weight:800;letter-spacing:1px">⚡ STREAK: 7 DAYS</span>
+    </div>
+  </div>
+  <div style="background:#f5f5f5;padding:8px 20px;display:flex;justify-content:space-between;font-size:11px;color:#888;border-top:1px solid #eee">
+    <span>⏰ 下次复习：明天</span><span>📊 今日已完成 12/20</span>
+  </div>
+</div>
+
+<!-- ===== STYLE B: Balanced Fusion ===== -->
+<div class="section"><h3>B · 平衡融合</h3></div>
+<div class="mockup-frame" style="background:#f5f0eb;border:3px solid #1a1a1a">
+  <div style="background:#fffef9;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #1a1a1a">
+    <span style="font-weight:900;font-size:17px;letter-spacing:-0.5px;color:#1a1a1a">ENGLISH LAB</span>
+    <span style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;background:#ff6b35;color:#fff;padding:3px 10px;border-radius:3px">READING</span>
+  </div>
+  <div style="padding:24px">
+    <div class="speech-bubble" style="margin-bottom:16px">今天第 3 张，加油！</div>
+    <div style="display:flex;gap:6px;margin-bottom:20px">
+      <div class="progress-dot" style="background:#1a1a1a;width:32px;height:5px;border-radius:3px"></div><div class="progress-dot" style="background:#1a1a1a;width:32px;height:5px;border-radius:3px"></div><div class="progress-dot" style="background:#1a1a1a;width:32px;height:5px;border-radius:3px"></div><div class="progress-dot" style="background:#ddd;width:32px;height:5px;border-radius:3px"></div><div class="progress-dot" style="background:#ddd;width:32px;height:5px;border-radius:3px"></div>
+      <span style="font-size:11px;color:#555;margin-left:8px;font-weight:700">3 / 5</span>
+    </div>
+    <!-- Main card with comic halftone + bold border -->
+    <div style="background:#fffef9;border:3px solid #1a1a1a;border-radius:14px;padding:44px 20px;text-align:center;margin-bottom:20px;box-shadow:6px 6px 0 #ddd;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(circle, #00000008 1px, transparent 1px);background-size:6px 6px;pointer-events:none"></div>
+      <div style="position:relative;z-index:1">
+        <div style="font-size:12px;color:#006d77;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;font-family:'Courier New',monospace">📖 READING · VOCABULARY</div>
+        <div style="font-size:36px;font-weight:900;color:#1a1a1a;letter-spacing:-1px;margin-bottom:4px">ubiquitous</div>
+        <div style="font-size:12px;color:#ff6b35;font-weight:700;margin-top:6px">/juːˈbɪkwɪtəs/</div>
+        <div style="font-size:14px;color:#888;margin-top:8px">tap to reveal →</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn" style="background:#d62828;border:2px solid #1a1a1a;box-shadow:3px 3px 0 #aaa">NOPE</button>
+      <button class="btn" style="background:#ff6b35;border:2px solid #1a1a1a;box-shadow:3px 3px 0 #aaa">HMM...</button>
+      <button class="btn" style="background:#006d77;border:2px solid #1a1a1a;box-shadow:3px 3px 0 #aaa">GOT IT!</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:11px;color:#888;font-weight:600">
+      <span>⚡ 7 DAY STREAK</span>
+      <span>⏰ NEXT: TOMORROW</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STYLE C: Heavy Comic Immersion ===== -->
+<div class="section"><h3>C · 重度漫画化</h3></div>
+<div class="mockup-frame" style="background:#e8e0d5;border:3px solid #111">
+  <!-- Comic panel header -->
+  <div style="background:#fffcf0;padding:10px 20px;display:flex;align-items:center;gap:10px;border-bottom:3px solid #111">
+    <div style="width:32px;height:32px;background:#ff3c38;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px">💪</div>
+    <span style="font-weight:900;font-size:18px;letter-spacing:-0.5px;color:#111">ENGLISH LAB!</span>
+    <span style="font-family:'Comic Sans MS',cursive;font-size:16px;background:#ffd700;padding:2px 8px;border:2px solid #111;transform:rotate(-5deg);color:#111">READING!</span>
+  </div>
+  <div style="padding:20px 24px;background-image:radial-gradient(circle, #00000010 1px, transparent 1px);background-size:10px 10px">
+    <!-- Halftone progress -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center">
+      <span style="font-family:'Comic Sans MS',cursive;font-size:13px;font-weight:700;color:#111">PANEL</span>
+      <div class="progress-dot" style="background:#111;width:36px;height:8px;border-radius:2px;border:2px solid #111"></div><div class="progress-dot" style="background:#111;width:36px;height:8px;border-radius:2px;border:2px solid #111"></div><div class="progress-dot" style="background:#111;width:36px;height:8px;border-radius:2px;border:2px solid #111"></div><div class="progress-dot" style="background:#f0e8d8;width:36px;height:8px;border-radius:2px;border:2px solid #111"></div><div class="progress-dot" style="background:#f0e8d8;width:36px;height:8px;border-radius:2px;border:2px solid #111"></div>
+      <span style="font-weight:900;font-size:16px;color:#111">3/5</span>
+    </div>
+    <!-- Warp zone card -->
+    <div style="background:#fffcf0;border:4px solid #111;border-radius:0;padding:36px 16px;text-align:center;margin-bottom:16px;box-shadow:8px 8px 0 #00000030;position:relative">
+      <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#ff3c38;border:3px solid #111;padding:4px 16px;font-weight:900;font-size:12px;color:#fff;letter-spacing:1px">★ ATTACK!</div>
+      <div style="font-size:14px;color:#555;font-weight:700;letter-spacing:1px;margin-bottom:10px">📖 READING MODE</div>
+      <div style="font-size:42px;font-weight:900;color:#111;letter-spacing:-1px;font-family:'Impact',sans-serif">UBIQUITOUS</div>
+      <div style="font-size:16px;font-weight:700;color:#ff3c38;margin-top:4px;font-family:'Comic Sans MS',cursive">/juː•BIK•wi•təs/</div>
+      <div style="font-size:13px;color:#888;margin-top:10px;font-weight:700">* TAP CARD TO REVEAL *</div>
+      <!-- Halftone dots overlay -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(circle, #00000010 2px, transparent 2px);background-size:12px 12px;pointer-events:none;border-radius:0"></div>
+    </div>
+    <!-- Comic action buttons -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" style="background:#c1121f;border:3px solid #111;box-shadow:4px 4px 0 #00000030;font-family:'Impact',sans-serif;letter-spacing:1px">❌ MISS!</button>
+      <button class="btn" style="background:#f77f00;border:3px solid #111;box-shadow:4px 4px 0 #00000030;font-family:'Impact',sans-serif;letter-spacing:1px">🤔 HMM...</button>
+      <button class="btn" style="background:#1b4332;border:3px solid #111;box-shadow:4px 4px 0 #00000030;font-family:'Impact',sans-serif;letter-spacing:1px">💥 POW!</button>
+    </div>
+    <!-- Bottom stats -->
+    <div style="display:flex;justify-content:space-between;margin-top:16px;font-size:11px">
+      <span style="background:#ffd700;border:2px solid #111;padding:4px 10px;font-weight:900;color:#111">🔥 7-DAY STREAK!</span>
+      <span style="background:#fff;border:2px solid #111;padding:4px 10px;font-weight:700;color:#111">⏰ NEXT: TOMORROW</span>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:28px">
+  <h3>📋 风格对比速查</h3>
+</div>
+<table style="width:100%;font-size:13px;border-collapse:collapse;color:#ccc">
+  <tr style="background:#1a1a2e"><th style="padding:10px;text-align:left">维度</th><th style="padding:10px;text-align:center">A · 轻量点缀</th><th style="padding:10px;text-align:center;color:#ff6b35">B · 平衡融合 ⭐</th><th style="padding:10px;text-align:center">C · 重度漫画</th></tr>
+  <tr style="border-bottom:1px solid #333"><td style="padding:10px">卡片风格</td><td style="padding:10px;text-align:center;font-size:12px">细线 + 圆角</td><td style="padding:10px;text-align:center;font-size:12px;color:#ff6b35">粗框 + 网点 + 戏剧性阴影</td><td style="padding:10px;text-align:center;font-size:12px">极粗框 + 网点全覆盖</td></tr>
+  <tr style="border-bottom:1px solid #333"><td style="padding:10px">按钮文案</td><td style="padding:10px;text-align:center;font-size:12px">认识 / 不认识</td><td style="padding:10px;text-align:center;font-size:12px;color:#ff6b35">GOT IT! / NOPE / HMM...</td><td style="padding:10px;text-align:center;font-size:12px">POW! / MISS! / HMM...</td></tr>
+  <tr style="border-bottom:1px solid #333"><td style="padding:10px">字体</td><td style="padding:10px;text-align:center;font-size:12px">系统默认</td><td style="padding:10px;text-align:center;font-size:12px;color:#ff6b35">系统 + 等宽点缀</td><td style="padding:10px;text-align:center;font-size:12px">Impact + Comic Sans</td></tr>
+  <tr style="border-bottom:1px solid #333"><td style="padding:10px">学习专注度</td><td style="padding:10px;text-align:center;color:#52b788;font-size:12px">★★★★★</td><td style="padding:10px;text-align:center;color:#52b788;font-size:12px">★★★★☆</td><td style="padding:10px;text-align:center;color:#f77f00;font-size:12px">★★★☆☆</td></tr>
+  <tr><td style="padding:10px">个性辨识度</td><td style="padding:10px;text-align:center;color:#f77f00;font-size:12px">★★★☆☆</td><td style="padding:10px;text-align:center;color:#3a86ff;font-size:12px">★★★★☆</td><td style="padding:10px;text-align:center;color:#52b788;font-size:12px">★★★★★</td></tr>
+</table>

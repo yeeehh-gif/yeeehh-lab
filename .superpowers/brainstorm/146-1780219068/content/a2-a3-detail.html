@@ -1,0 +1,168 @@
+<h2>🔊 A2 · TTS 语音增强 — 详细设计</h2>
+<p class="subtitle">基于浏览器原生 Web Speech API，零额外成本，渐进式接入</p>
+
+<div class="section">
+  <h3>🎯 分阶段实现路线</h3>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">语音功能三阶段</div>
+  <div class="mockup-body">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px;background:#2d6a4f;border-radius:8px;padding:16px">
+        <div style="font-weight:700;color:#52b788;margin-bottom:8px">Phase 1 · 单词发音</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.6">
+          🔊 点击单词 → 播放发音<br>
+          📋 训练卡片上的发音按钮<br>
+          🌐 Web Speech API 直接调用<br>
+          🎛️ 可调速（0.5x ~ 2x）
+        </div>
+        <div style="margin-top:10px;background:#1b4332;border-radius:4px;padding:8px;text-align:center">
+          <span style="font-size:24px">🔊</span>
+          <div style="font-size:11px;color:#52b788">ubiquitous</div>
+          <span style="font-size:10px;color:#888">点击发音</span>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:180px;background:#0f3460;border-radius:8px;padding:16px">
+        <div style="font-weight:700;color:#3a86ff;margin-bottom:8px">Phase 2 · 例句朗读</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.6">
+          📖 例句整句朗读<br>
+          🔁 单句循环 / 逐词高亮<br>
+          📝 跟读模式（文本对照）<br>
+          ⏯️ 暂停/继续控制
+        </div>
+        <div style="margin-top:10px;background:#16213e;border-radius:4px;padding:8px;text-align:center">
+          <span style="font-size:14px;color:#fff">"The internet has become</span>
+          <span style="font-size:14px;color:#52b788;font-weight:600"> ubiquitous </span>
+          <span style="font-size:14px;color:#fff">in modern life."</span>
+          <div style="margin-top:6px">
+            <span style="font-size:10px;color:#888">⏮️ ⏯️ ⏭️</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:180px;background:#533483;border-radius:8px;padding:16px">
+        <div style="font-weight:700;color:#ff6b6b;margin-bottom:8px">Phase 3 · 口语评测</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.6">
+          🎤 用户录音 → AI 评分<br>
+          📊 发音准确度反馈<br>
+          🔍 逐词对比原音<br>
+          💡 Gemini API 发音建议
+        </div>
+        <div style="margin-top:10px;background:#2d1b69;border-radius:4px;padding:8px;text-align:center">
+          <span style="font-size:20px">🎤</span>
+          <div style="font-size:10px;color:#aaa">你的发音得分</div>
+          <div style="font-size:20px;color:#ff6b6b">78/100</div>
+          <div style="font-size:9px;color:#888">"th" 发音需要练习</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔧 技术实现</h3>
+</div>
+
+<table style="width:100%;font-size:13px;border-collapse:collapse;color:#aaa">
+  <tr style="background:#1a1a2e">
+    <th style="padding:10px;text-align:left;color:#fff">功能</th>
+    <th style="padding:10px;text-align:left;color:#fff">技术选型</th>
+    <th style="padding:10px;text-align:left;color:#fff">说明</th>
+  </tr>
+  <tr style="border-bottom:1px solid #333">
+    <td style="padding:10px;color:#52b788">🔊 TTS 语音合成</td>
+    <td style="padding:10px">Web Speech API (SpeechSynthesis)</td>
+    <td style="padding:10px;font-size:12px">浏览器原生，所有主流浏览器支持，免费无限制</td>
+  </tr>
+  <tr style="border-bottom:1px solid #333">
+    <td style="padding:10px;color:#52b788">🎤 语音识别</td>
+    <td style="padding:10px">Web Speech API (SpeechRecognition)</td>
+    <td style="padding:10px;font-size:12px">仅在 Chrome/Edge 可用，用于口语跟读输入</td>
+  </tr>
+  <tr style="border-bottom:1px solid #333">
+    <td style="padding:10px;color:#52b788">🤖 发音评测</td>
+    <td style="padding:10px">Gemini API + 录音转文字对比</td>
+    <td style="padding:10px;font-size:12px">Phase 3 才需要，用 AI 做发音质量分析</td>
+  </tr>
+  <tr style="border-bottom:1px solid #333">
+    <td style="padding:10px;color:#52b788">🌍 多口音</td>
+    <td style="padding:10px">Synthesis 原生支持 en-US / en-GB / en-AU</td>
+    <td style="padding:10px;font-size:12px">用户可切换美音/英音偏好</td>
+  </tr>
+</table>
+
+<div class="section" style="margin-top:24px">
+  <h3>📱 A3 · PWA 离线支持 — 详细设计</h3>
+  <p class="subtitle">Next.js + next-pwa 插件，类 App 体验</p>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-body">
+      <h3>📴 离线训练能力</h3>
+      <p>Service Worker 缓存静态资源 + 已加载的训练数据。离线状态下仍可完成当日训练队列，联网后自动同步进度。</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>离线可用</h4><ul>
+          <li>已缓存的训练队列</li>
+          <li>单词浏览和搜索</li>
+          <li>错题本查看</li>
+          <li>训练进度本地暂存</li>
+        </ul></div>
+        <div class="cons"><h4>需联网</h4><ul>
+          <li>新笔记导入 / AI 提取</li>
+          <li>TTS 首次加载语音</li>
+          <li>数据同步到云端</li>
+          <li>统计面板最新数据</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h3>🏠 安装到桌面 / 手机</h3>
+      <p>满足 PWA 安装条件后，浏览器提示"添加到主屏幕"，体验接近原生 App。</p>
+      <ul style="font-size:13px;color:#aaa;line-height:1.8">
+        <li>🖥️ 桌面端：独立窗口，无浏览器地址栏</li>
+        <li>📱 移动端：添加到手机主屏幕，全屏运行</li>
+        <li>🔔 推送通知：每日训练提醒（通过 Notification API）</li>
+        <li>🎨 自定义图标 / 启动画面 / 主题色</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h3>🔄 离线同步策略</h3>
+      <p>联网时正常操作；离线时本地 IndexedDB 暂存，联网后自动合并。</p>
+      <div style="display:flex;gap:10px;font-size:12px;margin-top:10px">
+        <div style="background:#1a1a2e;border-radius:6px;padding:10px;flex:1;text-align:center">
+          <div style="color:#3a86ff;font-weight:600">在线模式</div>
+          <div style="color:#888;margin-top:4px">API → Supabase</div>
+          <div style="color:#888">数据实时同步</div>
+        </div>
+        <div style="background:#1a1a2e;border-radius:6px;padding:10px;flex:1;text-align:center">
+          <div style="color:#f77f00;font-weight:600">离线模式</div>
+          <div style="color:#888;margin-top:4px">IndexedDB 暂存</div>
+          <div style="color:#888">训练记录标记为待同步</div>
+        </div>
+        <div style="background:#1a1a2e;border-radius:6px;padding:10px;flex:1;text-align:center">
+          <div style="color:#52b788;font-weight:600">恢复在线</div>
+          <div style="color:#888;margin-top:4px">自动 merge</div>
+          <div style="color:#888">冲突以服务器为准</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;background:#1a1a2e;border-radius:8px;padding:16px">
+  <h4 style="color:#f77f00;margin-top:0">⚠️ 注意事项</h4>
+  <ul style="font-size:13px;color:#aaa;line-height:1.8">
+    <li>PWA 离线同步增加了复杂度，<strong>建议作为 Phase 2 功能</strong>，第一版先做纯在线</li>
+    <li>iOS Safari 对 PWA 支持有限（推送通知不支持），但"添加到主屏幕"可用</li>
+    <li>离线数据量需控制——单次缓存不超过用户最近 7 天的训练内容</li>
+  </ul>
+</div>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Lab — Statistics</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --body: #555555;
+    --muted: #8a8a8a;
+    --faint: #b8bcc0;
+    --rule: #e8ebef;
+    --charcoal: #1e1e1e;
+    --accent: #3b6e8e;
+    --gold: #d4b040;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.02);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --font: 'DM Sans', 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+    --font-mono: 'DM Mono', 'SF Mono', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--font);
+    color: var(--body);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 200px 1fr 260px;
+    gap: 24px;
+    width: 100%;
+    max-width: 1280px;
+    min-height: 100vh;
+    padding: 28px 32px;
+  }
+
+  /* ── LEFT SIDEBAR ── */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+    margin-bottom: 28px;
+    padding: 0 12px;
+  }
+  .nav-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(0,0,0,0.03); color: var(--ink); }
+  .nav-item.active { background: rgba(0,0,0,0.05); color: var(--ink); font-weight: 600; }
+  .nav-section {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--faint);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 20px 12px 8px;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+
+  /* ── HERO STAT BANNER — the visual anchor ── */
+  .hero-banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .hero-block {
+    background: var(--charcoal);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-block::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -20px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-value {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-sub {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-sub strong { color: var(--gold); font-weight: 700; }
+
+  /* Light variant for streak card */
+  .hero-block--light {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow-md);
+  }
+  .hero-block--light .hero-label { color: var(--faint); }
+  .hero-block--light .hero-sub { color: var(--muted); }
+  .hero-block--light .hero-sub strong { color: var(--accent); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-md);
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.1px;
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--faint);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* ── HEATMAP ── */
+  .heatmap-wrapper {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .heatmap-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: #ebeef2;
+  }
+  .heatmap-cell.l1 { background: #c0d4dd; }
+  .heatmap-cell.l2 { background: #7eaec0; }
+  .heatmap-cell.l3 { background: #3e7a94; }
+  .heatmap-cell.l4 { background: #1e4a5e; }
+  .heatmap-months {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--faint);
+    font-weight: 500;
+    padding: 0 2px;
+  }
+  .heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 10px;
+    color: var(--faint);
+    justify-content: flex-end;
+  }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 2px; display: inline-block;
+  }
+
+  /* ── MASTERY ── */
+  .mastery-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .mastery-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .mastery-item:last-child { margin-bottom: 0; }
+  .mastery-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 70px;
+  }
+  .mastery-track {
+    flex: 1;
+    height: 8px;
+    background: #ebeef2;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mastery-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--charcoal);
+  }
+  .mastery-pct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* ── REVIEW LIST ── */
+  .review-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: #fafbfc;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+  }
+  .review-item:last-child { margin-bottom: 0; }
+  .review-day {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 64px;
+  }
+  .review-info { flex: 1; }
+  .review-count {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .review-type {
+    font-size: 11px;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .review-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--charcoal);
+    flex-shrink: 0;
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Calendar */
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .calendar-month {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .calendar-nav {
+    font-size: 13px;
+    color: var(--faint);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+  }
+  .calendar-day-header {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--faint);
+    padding: 5px 0;
+    text-transform: uppercase;
+  }
+  .calendar-day {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    padding: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .calendar-day:hover { background: rgba(0,0,0,0.04); }
+  .calendar-day.today {
+    background: var(--charcoal);
+    color: #fff;
+    font-weight: 700;
+  }
+  .calendar-day.trained {
+    position: relative;
+  }
+  .calendar-day.trained::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .calendar-day.today.trained::after { background: var(--gold); }
+  .calendar-day.muted { color: var(--faint); }
+
+  /* Progress ring */
+  .progress-ring-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(var(--charcoal) 0deg 230deg, #ebeef2 230deg 360deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .progress-ring-inner {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .progress-ring-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+  .progress-done {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .progress-remaining {
+    font-size: 12px;
+    color: var(--faint);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .progress-breakdown {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  /* Quick actions */
+  .quick-action {
+    padding: 12px 16px;
+    background: #fafbfc;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+  }
+  .quick-action:last-child { margin-bottom: 0; }
+  .quick-action:hover { background: #f0f2f5; }
+
+  @media (max-width: 1100px) {
+    .app { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
+    .sidebar { display: none; }
+    .right-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .hero-banner { grid-template-columns: 1fr; }
+    .mastery-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .right-panel { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">English Lab</div>
+    <nav>
+      <span class="nav-section">Main</span>
+      <div class="nav-item">Dashboard</div>
+      <div class="nav-item">Training</div>
+      <div class="nav-item active">Statistics</div>
+      <span class="nav-section">Library</span>
+      <div class="nav-item">My Words</div>
+      <div class="nav-item">Import Notes</div>
+      <span class="nav-section">Settings</span>
+      <div class="nav-item">Preferences</div>
+    </nav>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <h1 class="page-title">Statistics</h1>
+
+    <!-- ★ HERO BANNER — dark anchor ★ -->
+    <div class="hero-banner">
+      <div class="hero-block">
+        <div class="hero-label">Total vocabulary</div>
+        <div class="hero-value">486</div>
+        <div class="hero-sub"><strong>+22</strong> added this week</div>
+      </div>
+      <div class="hero-block hero-block--light">
+        <div class="hero-label">Current streak</div>
+        <div class="hero-value">7</div>
+        <div class="hero-sub">consecutive days · best <strong>14</strong></div>
+      </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Training activity</div>
+          <div class="card-subtitle">365 days of practice</div>
+        </div>
+      </div>
+      <div class="heatmap-wrapper" id="heatmap"></div>
+      <div class="heatmap-months">
+        <span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span>
+        <span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
+      </div>
+      <div class="heatmap-legend">
+        Less
+        <span class="legend-dot" style="background:#ebeef2"></span>
+        <span class="legend-dot" style="background:#c0d4dd"></span>
+        <span class="legend-dot" style="background:#7eaec0"></span>
+        <span class="legend-dot" style="background:#3e7a94"></span>
+        <span class="legend-dot" style="background:#1e4a5e"></span>
+        More
+      </div>
+    </div>
+
+    <!-- Mastery + Reviews row -->
+    <div class="mastery-row">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Mastery by category</div>
+        <div class="mastery-item">
+          <span class="mastery-label">Reading</span>
+          <div class="mastery-track"><div class="mastery-fill" style="width:78%"></div></div>
+          <span class="mastery-pct">78%</span>
+        </div>
+        <div class="mastery-item">
+          <span class="mastery-label">Speaking</span>
+          <div class="mastery-track"><div class="mastery-fill" style="width:45%"></div></div>
+          <span class="mastery-pct">45%</span>
+        </div>
+        <div class="mastery-item">
+          <span class="mastery-label">Writing</span>
+          <div class="mastery-track"><div class="mastery-fill" style="width:62%"></div></div>
+          <span class="mastery-pct">62%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px">Upcoming reviews</div>
+        <div class="review-item">
+          <span class="review-dot"></span>
+          <span class="review-day">Today</span>
+          <div class="review-info">
+            <div class="review-count">8 words</div>
+            <div class="review-type">Reading · Writing</div>
+          </div>
+        </div>
+        <div class="review-item">
+          <span class="review-dot"></span>
+          <span class="review-day">Tomorrow</span>
+          <div class="review-info">
+            <div class="review-count">14 words</div>
+            <div class="review-type">Reading · Speaking · Writing</div>
+          </div>
+        </div>
+        <div class="review-item">
+          <span class="review-dot"></span>
+          <span class="review-day">In 2 days</span>
+          <div class="review-info">
+            <div class="review-count">6 words</div>
+            <div class="review-type">Reading</div>
+          </div>
+        </div>
+        <div class="review-item">
+          <span class="review-dot"></span>
+          <span class="review-day">In 4 days</span>
+          <div class="review-info">
+            <div class="review-count">11 words</div>
+            <div class="review-type">Speaking · Writing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── RIGHT PANEL ── -->
+  <aside class="right-panel">
+
+    <!-- Calendar -->
+    <div class="card">
+      <div class="calendar-header">
+        <span class="calendar-month">May 2026</span>
+        <span class="calendar-nav">←  →</span>
+      </div>
+      <div class="calendar-grid">
+        <span class="calendar-day-header">Mo</span><span class="calendar-day-header">Tu</span><span class="calendar-day-header">We</span>
+        <span class="calendar-day-header">Th</span><span class="calendar-day-header">Fr</span><span class="calendar-day-header">Sa</span><span class="calendar-day-header">Su</span>
+        <span class="calendar-day muted">28</span><span class="calendar-day muted">29</span><span class="calendar-day muted">30</span>
+        <span class="calendar-day">1</span><span class="calendar-day">2</span><span class="calendar-day">3</span><span class="calendar-day">4</span>
+        <span class="calendar-day">5</span><span class="calendar-day">6</span><span class="calendar-day">7</span><span class="calendar-day">8</span><span class="calendar-day">9</span><span class="calendar-day">10</span><span class="calendar-day">11</span>
+        <span class="calendar-day">12</span><span class="calendar-day">13</span><span class="calendar-day">14</span><span class="calendar-day">15</span><span class="calendar-day">16</span><span class="calendar-day">17</span><span class="calendar-day">18</span>
+        <span class="calendar-day">19</span><span class="calendar-day">20</span><span class="calendar-day">21</span><span class="calendar-day">22</span><span class="calendar-day">23</span><span class="calendar-day">24</span><span class="calendar-day">25</span>
+        <span class="calendar-day trained">26</span><span class="calendar-day trained">27</span><span class="calendar-day trained">28</span><span class="calendar-day trained">29</span><span class="calendar-day trained">30</span>
+        <span class="calendar-day today trained">31</span>
+        <span class="calendar-day muted">1</span><span class="calendar-day muted">2</span><span class="calendar-day muted">3</span><span class="calendar-day muted">4</span><span class="calendar-day muted">5</span>
+      </div>
+    </div>
+
+    <!-- Today's progress -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">Today's progress</div>
+      <div class="progress-ring-wrap">
+        <div class="progress-ring">
+          <div class="progress-ring-inner">
+            <span class="progress-ring-value">16</span>
+          </div>
+        </div>
+        <div>
+          <div class="progress-done">16 / 20</div>
+          <div class="progress-remaining">4 words remaining</div>
+        </div>
+      </div>
+      <div class="progress-breakdown">
+        <div>Reading &nbsp; 8 / 10</div>
+        <div>Speaking &nbsp; 5 / 6</div>
+        <div>Writing &nbsp; 3 / 4</div>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">Quick actions</div>
+      <div class="quick-action">Continue today's training</div>
+      <div class="quick-action">Review error backlog · 12</div>
+      <div class="quick-action">Import new notes</div>
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+  const heatmap = document.getElementById('heatmap');
+  const levels = [0,0,0,0,1,1,2,3,1,0,0,2,2,3,4,2,1,0,1,3,3,2,1,0,0,1,2,2,1,0,0,3,4,3,2,1,1,0,0,1,2,2,3,3,2,1,0,0,1,3,4,4,3,2,0,0,1,2,2,1,0,0,0,0,1,3,4,3,2,1,0,0,0,1,2,2,1,1,0,0,3,4,3,2,1,0,0,0,1,2,2,1,0,0,0,0,0,1,1,0,0,0,0,0,2,3,2,1,0,0,0,1,2,1,0,0,0,0,1,2,3,3,2,1,0,0,0,0,1,2,2,2,1,0,0,1,2,3,3,3,2,1,0,0,0,1,2,3,3,2,1,0,0,0,0,1,2,2,3,3,2,1,0,1,2,3,4,3,2,1,0,0,1,2,3,3,2,1,0,0,1,2,3,3,2,1,0,0,1,2,2,2,1,0,0,0,1,2,3,3,2,1,0,1,2,3,4,4,3,2,1,1,2,3,3,2,1,0,0,0,2,3,4,3,2,1,0,0,0,1,1,0,0,0,0,0,2,3,4,4,3,2,1,0,1,2,3,3,2,1,0,0,0,3,4,4,3,2,1,0,0,1,2,2,1,0,0,0,0,1,2,3,3,2,1,0,1,2,3,4,3,2,1,0,0,2,3,3,2,1,0,0,0,1,2,4,4,3,2,1,2,3,4,4,3,2,1,0,0];
+
+  let html = '';
+  for (const lv of levels) {
+    html += `<div class="heatmap-cell${lv ? ' l'+lv : ''}"></div>`;
+  }
+  heatmap.innerHTML = html;
+</script>
+
+</body>
+</html>

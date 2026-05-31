@@ -1,0 +1,176 @@
+<h2>🏗️ 英语学习网站 — 模块架构方案</h2>
+<p class="subtitle">推荐方案：模块化单体（Next.js 全栈），按功能边界拆分为 6 个核心模块 + 3 个辅助模块</p>
+
+<div class="section">
+  <h3>📦 核心模块（必须实现）</h3>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="m1" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">📝</span>
+      <h4 style="color:#e94560;margin:8px 0">M1 · 笔记导入与AI提取</h4>
+      <p style="color:#aaa;font-size:13px">NotebookLM API → 内容解析 → 单词/短语/句式提取</p>
+      <p style="color:#888;font-size:12px">依赖：notebooklm skill + Gemini API</p>
+    </div>
+    <div class="card-body">
+      <h3>M1 · 笔记导入与AI提取</h3>
+      <p>对接 NotebookLM 读取笔记，AI 自动提取单词、短语、句式、语法点，按训练类型分类归档</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="m2" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">📚</span>
+      <h4 style="color:#0f3460;margin:8px 0">M2 · 词汇与内容管理</h4>
+      <p style="color:#aaa;font-size:13px">单词库 | 短语库 | 例句库 | 标签分类</p>
+      <p style="color:#888;font-size:12px">CRUD + 搜索 + 筛选 + 批量导入</p>
+    </div>
+    <div class="card-body">
+      <h3>M2 · 词汇与内容管理</h3>
+      <p>结构化存储所有学习内容，支持手动增删改查、按来源笔记追溯、按熟练度/标签分组</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="m3" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">🧠</span>
+      <h4 style="color:#16213e;margin:8px 0">M3 · 艾宾浩斯调度引擎</h4>
+      <p style="color:#aaa;font-size:13px">遗忘曲线算法 | 复习日历 | 推送队列</p>
+      <p style="color:#888;font-size:12px">核心算法模块，决定何时复习什么</p>
+    </div>
+    <div class="card-body">
+      <h3>M3 · 艾宾浩斯调度引擎</h3>
+      <p>基于遗忘曲线计算每个学习单元的最佳复习时间点（1/2/4/7/15/30天），生成每日训练队列</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="m4" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">🏋️</span>
+      <h4 style="color:#533483;margin:8px 0">M4 · 训练执行模块</h4>
+      <p style="color:#aaa;font-size:13px">口语 | 阅读 | 写作 | 错题本</p>
+      <p style="color:#888;font-size:12px">闪卡 + 翻译 + 填空 + 完形 + 写作</p>
+    </div>
+    <div class="card-body">
+      <h3>M4 · 训练执行模块</h3>
+      <p>三种训练类型各自的多题型实现，统一的评分/纠错/错题回收机制，训练记录写入数据库</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="m5" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">📊</span>
+      <h4 style="color:#e76f51;margin:8px 0">M5 · 进度追踪与统计</h4>
+      <p style="color:#aaa;font-size:13px">学习日历热力图 | 掌握率 | 趋势图</p>
+      <p style="color:#888;font-size:12px">Chart.js 可视化，激励持续学习</p>
+    </div>
+    <div class="card-body">
+      <h3>M5 · 进度追踪与统计</h3>
+      <p>可视化学习数据：每日打卡热力图、各模块掌握率、复习曲线、学习时长统计、词汇量增长趋势</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="m6" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">🔁</span>
+      <h4 style="color:#2d6a4f;margin:8px 0">M6 · 错题强化闭环</h4>
+      <p style="color:#aaa;font-size:13px">错题本 | 间隔重做 | 错误类型分析</p>
+      <p style="color:#888;font-size:12px">错题也按艾宾浩斯曲线重新入队</p>
+    </div>
+    <div class="card-body">
+      <h3>M6 · 错题强化闭环</h3>
+      <p>训练中的错题自动收录，按错误类型归类，以更短间隔重新排入训练队列，直到连续 3 次正确后释放</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔧 辅助模块（建议实现）</h3>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="a1" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">🎯</span>
+      <h4 style="color:#f77f00;margin:8px 0">A1 · 目标设定与提醒</h4>
+      <p style="color:#aaa;font-size:13px">每日目标 | 浏览器通知 | 连续打卡</p>
+      <p style="color:#888;font-size:12px">建议补充</p>
+    </div>
+    <div class="card-body">
+      <h3>A1 · 目标设定与提醒</h3>
+      <p>设定每日学习量（如每天 20 个单词 + 1 篇阅读），到期推送浏览器通知，连续打卡激励。低开发成本，高激励效果。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="a2" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">🔊</span>
+      <h4 style="color:#3a86ff;margin:8px 0">A2 · TTS语音增强</h4>
+      <p style="color:#aaa;font-size:13px">Web Speech API | 单词发音 | 例句朗读</p>
+      <p style="color:#888;font-size:12px">建议补充</p>
+    </div>
+    <div class="card-body">
+      <h3>A2 · TTS 语音增强</h3>
+      <p>利用浏览器内置 Web Speech API（零成本），为单词和例句提供发音朗读，提升听力输入。后续可升级为 AI 语音评测。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="a3" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1a2e;padding:20px;text-align:left">
+      <span style="font-size:28px">📱</span>
+      <h4 style="color:#8338ec;margin:8px 0">A3 · PWA 离线支持</h4>
+      <p style="color:#aaa;font-size:13px">Service Worker | 离线训练 | 安装到桌面</p>
+      <p style="color:#888;font-size:12px">后续增强</p>
+    </div>
+    <div class="card-body">
+      <h3>A3 · PWA 离线支持</h3>
+      <p>将网站做成 PWA，支持离线访问已缓存内容、添加到手机桌面，实现类 App 体验。Next.js 对 PWA 有良好支持。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔄 数据流概览</h3>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">系统数据流</div>
+  <div class="mockup-body" style="font-size:14px;line-height:2">
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:140px;background:#16213e;border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">📤</div>
+        <div style="font-weight:600;color:#e94560">NotebookLM</div>
+        <div style="font-size:12px;color:#aaa">笔记源 · AI提取</div>
+      </div>
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+      <div style="flex:1;min-width:140px;background:#0f3460;border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">🗄️</div>
+        <div style="font-weight:600;color:#3a86ff">内容库</div>
+        <div style="font-size:12px;color:#aaa">单词·短语·例句</div>
+      </div>
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+      <div style="flex:1;min-width:140px;background:#533483;border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">🧠</div>
+        <div style="font-weight:600;color:#ff6b6b">调度引擎</div>
+        <div style="font-size:12px;color:#aaa">艾宾浩斯队列</div>
+      </div>
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+      <div style="flex:1;min-width:140px;background:#2d6a4f;border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">🏋️</div>
+        <div style="font-weight:600;color:#52b788">训练界面</div>
+        <div style="font-size:12px;color:#aaa">口语·阅读·写作</div>
+      </div>
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+      <div style="flex:1;min-width:140px;background:#e76f51;border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:22px;margin-bottom:6px">📊</div>
+        <div style="font-weight:600;color:#ffb703">统计面板</div>
+        <div style="font-size:12px;color:#aaa">进度·趋势</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:#1a1a2e;border-radius:8px;padding:12px;text-align:center">
+      <span style="color:#f77f00">🔁 错题回流：</span>
+      <span style="color:#aaa;font-size:13px">训练错题 → 错题本 → 短间隔重新入队 → 调度引擎 → 再次训练 → 连续正确 → 释放</span>
+    </div>
+  </div>
+</div>

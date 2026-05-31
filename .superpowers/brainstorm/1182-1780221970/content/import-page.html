@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Lab — Import Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf8f4;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --body: #555555;
+    --muted: #999999;
+    --faint: #bbbbbb;
+    --border: #e8e4dc;
+    --gold: #f0c040;
+    --green: #2d8a56;
+    --red: #cc4444;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.02);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03), 0 8px 32px rgba(0,0,0,0.02);
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --font: 'DM Sans', 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: var(--font);
+    color: var(--body);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .topbar-brand { font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
+  .topbar-status { font-size: 12px; color: var(--faint); font-weight: 500; }
+
+  /* ── Stepper ── */
+  .stepper {
+    display: flex;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .step {
+    flex: 1;
+    padding: 16px 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--faint);
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .step::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: var(--border);
+  }
+  .step:last-child::after { display: none; }
+  .step-num {
+    display: block;
+    width: 28px; height: 28px;
+    line-height: 28px;
+    border-radius: 50%;
+    background: #f0ede6;
+    margin: 0 auto 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.3s ease;
+  }
+  .step.active { color: var(--ink); }
+  .step.active .step-num { background: var(--ink); color: var(--gold); }
+  .step.done { color: var(--muted); }
+  .step.done .step-num { background: var(--green); color: #fff; }
+
+  /* ── Main Card ── */
+  .main-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+  .card-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: -14px;
+  }
+
+  /* ── Source Selector ── */
+  .source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .source-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #fdfcf9;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .source-item:hover { border-color: #ccc; background: #fff; }
+  .source-item.selected {
+    border-color: var(--ink);
+    border-width: 2px;
+    background: #fff;
+    padding: 15px 17px;
+  }
+  .source-check {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.15s ease;
+  }
+  .source-item.selected .source-check {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--gold);
+  }
+  .source-info { flex: 1; min-width: 0; }
+  .source-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .source-meta { font-size: 12px; color: var(--faint); margin-top: 2px; }
+  .source-type {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: var(--muted);
+    background: #f0ede6;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Extract Preview ── */
+  .extract-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .extract-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #fdfcf9;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+  }
+  .extract-item:hover { background: #fff; }
+  .extract-check {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .extract-item.checked .extract-check { background: var(--ink); border-color: var(--ink); color: var(--gold); }
+  .extract-word { font-size: 18px; font-weight: 700; color: var(--ink); min-width: 120px; }
+  .extract-def { font-size: 13px; color: var(--body); flex: 1; }
+  .extract-tag {
+    font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 100px;
+    letter-spacing: 0.5px; flex-shrink: 0;
+  }
+  .tag-reading { background: #e8f0fe; color: #4a7dc0; }
+  .tag-speaking { background: #fef3e4; color: #c08a30; }
+  .tag-writing { background: #eaf5ee; color: #3d7a52; }
+
+  /* ── Buttons ── */
+  .button-row {
+    display: flex;
+    gap: 12px;
+  }
+  .btn {
+    flex: 1;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 16px 10px;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 #d4cfc4;
+    transition: all 0.12s ease;
+    text-align: center;
+  }
+  .btn:hover { transform: translate(-1px, -2px); box-shadow: 7px 7px 0 #d4cfc4; }
+  .btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #d4cfc4; }
+  .btn--ghost { background: #fff; color: var(--muted); border-color: var(--border); box-shadow: var(--shadow-sm); font-weight: 600; }
+  .btn--ghost:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .btn--ghost:active { box-shadow: var(--shadow-sm); transform: none; }
+  .btn--primary { background: var(--ink); color: var(--gold); }
+  .btn--secondary { background: #fff; color: var(--ink); }
+
+  /* ── Success state ── */
+  .success-block {
+    text-align: center;
+    padding: 24px;
+    background: #fdfaee;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--radius-sm);
+    box-shadow: 5px 5px 0 #d4cfc4;
+    animation: feedbackIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .success-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, var(--gold) 2px, transparent 2px);
+    background-size: 10px 10px;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  @keyframes feedbackIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .success-emoji { font-size: 40px; display: block; margin-bottom: 6px; }
+  .success-title { font-size: 24px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
+  .success-sub { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .success-stats {
+    display: flex; justify-content: center; gap: 24px;
+    margin-top: 16px; font-size: 13px; color: var(--body); font-weight: 500;
+  }
+  .success-stats b { color: var(--ink); font-weight: 700; }
+
+  /* ── Summary bar ── */
+  .summary-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .summary-bar b { color: var(--ink); font-weight: 700; }
+
+  /* ── Count badge ── */
+  .count-badge {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--ink);
+    color: var(--gold);
+    padding: 2px 10px;
+    border-radius: 100px;
+  }
+
+  @media (max-width: 480px) {
+    .app-shell { gap: 16px; }
+    .main-card { padding: 24px 20px; }
+    .stepper { font-size: 10px; }
+    .step { padding: 12px 6px; }
+    .step-num { width: 24px; height: 24px; line-height: 24px; font-size: 11px; }
+    .card-title { font-size: 18px; }
+    .btn { font-size: 13px; padding: 14px 8px; }
+    .extract-word { font-size: 15px; min-width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell" id="app">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <span class="topbar-brand">English Lab</span>
+    <span class="topbar-status">Import Notes</span>
+  </div>
+
+  <!-- Stepper -->
+  <div class="stepper" id="stepper">
+    <div class="step active" id="step1">
+      <span class="step-num">1</span>Select Notes
+    </div>
+    <div class="step" id="step2">
+      <span class="step-num">2</span>AI Extract
+    </div>
+    <div class="step" id="step3">
+      <span class="step-num">3</span>Review
+    </div>
+    <div class="step" id="step4">
+      <span class="step-num">4</span>Import
+    </div>
+  </div>
+
+  <!-- Main Card — dynamic content injected here -->
+  <div class="main-card" id="mainCard">
+    <!-- Step 1 content -->
+    <div id="content-step1">
+      <div class="card-title">Select notes to import</div>
+      <div class="card-sub">Choose which NotebookLM notes you want to extract vocabulary from</div>
+
+      <div class="source-list">
+        <div class="source-item selected" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Unit 1 — Classroom Notes</div>
+            <div class="source-meta">Last updated · May 28, 2026  ·  1,200 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+        <div class="source-item selected" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Reading Digest — The Economist</div>
+            <div class="source-meta">Last updated · May 25, 2026  ·  3,400 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+        <div class="source-item" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Business English Glossary</div>
+            <div class="source-meta">Last updated · May 20, 2026  ·  800 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+        <div class="source-item" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Meeting Notes — May 15</div>
+            <div class="source-meta">Last updated · May 15, 2026  ·  600 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+      </div>
+
+      <div class="summary-bar">
+        <span>Selected <b>2 notes</b></span>
+        <span>Est. extraction · <b>20–30 words</b></span>
+      </div>
+
+      <div class="button-row">
+        <button class="btn btn--ghost">Cancel</button>
+        <button class="btn btn--primary" onclick="goStep(2)">Extract →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+
+  const stepContents = {
+    1: `
+      <div class="card-title">Select notes to import</div>
+      <div class="card-sub">Choose which NotebookLM notes you want to extract vocabulary from</div>
+      <div class="source-list">
+        <div class="source-item selected" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Unit 1 — Classroom Notes</div>
+            <div class="source-meta">Last updated · May 28, 2026  ·  1,200 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+        <div class="source-item selected" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Reading Digest — The Economist</div>
+            <div class="source-meta">Last updated · May 25, 2026  ·  3,400 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+        <div class="source-item" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Business English Glossary</div>
+            <div class="source-meta">Last updated · May 20, 2026  ·  800 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+        <div class="source-item" onclick="this.classList.toggle('selected')">
+          <div class="source-check">✓</div>
+          <div class="source-info">
+            <div class="source-name">Meeting Notes — May 15</div>
+            <div class="source-meta">Last updated · May 15, 2026  ·  600 words</div>
+          </div>
+          <span class="source-type">NOTEBOOK</span>
+        </div>
+      </div>
+      <div class="summary-bar">
+        <span>Selected <b>2 notes</b></span>
+        <span>Est. extraction · <b>20–30 words</b></span>
+      </div>
+      <div class="button-row">
+        <button class="btn btn--ghost">Cancel</button>
+        <button class="btn btn--primary" onclick="goStep(2)">Extract →</button>
+      </div>
+    `,
+
+    2: `
+      <div class="card-title">AI Extracting…</div>
+      <div class="card-sub">Gemini is analyzing 2 notes for vocabulary, phrases, and sentence patterns</div>
+      <div style="display:flex;flex-direction:column;gap:12px;padding:8px 0">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fdfcf9;border:1px solid var(--border);border-radius:12px">
+          <span style="font-size:24px">📝</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--ink)">Parsing notes…</div><div style="font-size:11px;color:var(--faint)">Identifying word boundaries</div></div>
+          <span style="font-size:12px;color:var(--green);font-weight:700">DONE</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fdfcf9;border:1px solid var(--border);border-radius:12px">
+          <span style="font-size:24px">🤖</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--ink)">Extracting vocabulary…</div><div style="font-size:11px;color:var(--faint)">Gemini API · 23 items found</div></div>
+          <span style="font-size:12px;color:var(--green);font-weight:700">DONE</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fdfcf9;border:1px solid var(--border);border-radius:12px">
+          <span style="font-size:24px">🏷️</span>
+          <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--ink)">Categorizing…</div><div style="font-size:11px;color:var(--faint)">Assigning reading / speaking / writing tags</div></div>
+          <span style="font-size:20px">⏳</span>
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="btn btn--ghost" onclick="goStep(1)">← Back</button>
+        <button class="btn btn--primary" onclick="goStep(3)" id="btnReview" style="opacity:0.5">Review results →</button>
+      </div>
+    `,
+
+    3: `
+      <div class="card-title">Review extracted items</div>
+      <div class="card-sub">23 items found. Uncheck any you don't want to import.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:-8px">
+        <span style="font-size:11px;font-weight:600;color:var(--faint)">FILTER:</span>
+        <span style="font-size:11px;font-weight:600;color:var(--ink);cursor:pointer;border-bottom:2px solid var(--ink)">All</span>
+        <span style="font-size:11px;font-weight:500;color:var(--muted);cursor:pointer">Reading</span>
+        <span style="font-size:11px;font-weight:500;color:var(--muted);cursor:pointer">Speaking</span>
+        <span style="font-size:11px;font-weight:500;color:var(--muted);cursor:pointer">Writing</span>
+        <span class="count-badge" style="margin-left:auto">23 items</span>
+      </div>
+      <div class="extract-grid">
+        <div class="extract-item checked" onclick="this.classList.toggle('checked')">
+          <div class="extract-check">✓</div>
+          <span class="extract-word">ubiquitous</span>
+          <span class="extract-def">无处不在的，普遍存在的</span>
+          <span class="extract-tag tag-reading">READING</span>
+        </div>
+        <div class="extract-item checked" onclick="this.classList.toggle('checked')">
+          <div class="extract-check">✓</div>
+          <span class="extract-word">call it a day</span>
+          <span class="extract-def">收工，到此为止</span>
+          <span class="extract-tag tag-speaking">SPEAKING</span>
+        </div>
+        <div class="extract-item checked" onclick="this.classList.toggle('checked')">
+          <div class="extract-check">✓</div>
+          <span class="extract-word">paradigm shift</span>
+          <span class="extract-def">范式转移，思维转变</span>
+          <span class="extract-tag tag-writing">WRITING</span>
+        </div>
+        <div class="extract-item checked" onclick="this.classList.toggle('checked')">
+          <div class="extract-check">✓</div>
+          <span class="extract-word">cutting edge</span>
+          <span class="extract-def">最前沿的，尖端的</span>
+          <span class="extract-tag tag-reading">READING</span>
+        </div>
+        <div class="extract-item" onclick="this.classList.toggle('checked')">
+          <div class="extract-check">✓</div>
+          <span class="extract-word">leverage</span>
+          <span class="extract-def">充分利用，借助</span>
+          <span class="extract-tag tag-writing">WRITING</span>
+        </div>
+        <div class="extract-item checked" onclick="this.classList.toggle('checked')">
+          <div class="extract-check">✓</div>
+          <span class="extract-word">touch base</span>
+          <span class="extract-def">联系一下，碰个头</span>
+          <span class="extract-tag tag-speaking">SPEAKING</span>
+        </div>
+      </div>
+      <div class="summary-bar">
+        <span>Selected <b>5 of 6</b> items</span>
+        <span style="font-size:11px;color:var(--faint)">+17 more below ↓</span>
+      </div>
+      <div class="button-row">
+        <button class="btn btn--ghost" onclick="goStep(2)">← Back</button>
+        <button class="btn btn--primary" onclick="goStep(4)">Import selected →</button>
+      </div>
+    `,
+
+    4: `
+      <div class="card-title">Import complete!</div>
+      <div class="card-sub" style="margin-bottom:4px">Content has been added to your library and queued for training</div>
+      <div style="background:#fdfaee;border:2.5px solid var(--ink);border-radius:12px;padding:28px 20px;text-align:center;box-shadow:5px 5px 0 #d4cfc4;position:relative;overflow:hidden;animation:feedbackIn 0.5s cubic-bezier(0.16,1,0.3,1)">
+        <div style="position:absolute;inset:0;background-image:radial-gradient(circle, #f0c040 2px, transparent 2px);background-size:10px 10px;opacity:0.18;pointer-events:none"></div>
+        <div style="position:relative;z-index:1">
+          <span class="success-emoji">💥</span>
+          <div class="success-title">POW!</div>
+          <div class="success-sub">22 words imported and ready to train</div>
+          <div class="success-stats">
+            <span>📖 Reading <b>12</b></span>
+            <span>🗣️ Speaking <b>6</b></span>
+            <span>✍️ Writing <b>4</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="btn btn--secondary" onclick="goStep(3)">Import more</button>
+        <button class="btn btn--primary">Start training →</button>
+      </div>
+    `
+  };
+
+  function goStep(n) {
+    currentStep = n;
+    document.getElementById('mainCard').innerHTML = stepContents[n];
+
+    // Update stepper
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById('step' + i);
+      el.classList.remove('active', 'done');
+      if (i < n) el.classList.add('done');
+      if (i === n) el.classList.add('active');
+    }
+
+    // Simulate extraction loading for step 2
+    if (n === 2) {
+      const btn = document.getElementById('btnReview');
+      if (btn) {
+        setTimeout(() => {
+          const thirdRow = document.querySelectorAll('#mainCard > div > div')[2];
+          if (thirdRow) {
+            thirdRow.innerHTML = thirdRow.innerHTML.replace('⏳', '<span style="font-size:12px;color:var(--green);font-weight:700">DONE</span>');
+            btn.style.opacity = '1';
+          }
+        }, 1500);
+      }
+    }
+  }
+
+  // Wait for step 2 extraction animation
+  let extractionTimer;
+  document.addEventListener('DOMContentLoaded', () => {
+    // Re-attach event listeners for dynamically rendered content
+    document.getElementById('mainCard').addEventListener('click', (e) => {
+      const sourceItem = e.target.closest('.source-item');
+      if (sourceItem && currentStep === 1) {
+        sourceItem.classList.toggle('selected');
+      }
+      const extractItem = e.target.closest('.extract-item');
+      if (extractItem && currentStep === 3) {
+        extractItem.classList.toggle('checked');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

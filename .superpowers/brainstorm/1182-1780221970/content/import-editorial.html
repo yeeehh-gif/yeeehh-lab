@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Lab — Import</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #faf7f2;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --body: #4a4a4a;
+    --muted: #8a8a8a;
+    --faint: #c4c0ba;
+    --rule: #e8e4de;
+    --accent: #2c4a5e;
+    --radius: 6px;
+    --font-display: 'Fraunces', 'Times New Roman', Georgia, serif;
+    --font-ui: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'DM Mono', 'SF Mono', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    font-family: var(--font-ui);
+    color: var(--body);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+  .masthead-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+    font-style: italic;
+  }
+  .masthead-section {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ── PROGRESS INDICATOR ── */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 48px;
+  }
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 12px;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .progress-num {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-style: italic;
+    margin-right: 8px;
+    color: var(--faint);
+    transition: color 0.3s;
+  }
+  .progress-step.active { color: var(--ink); }
+  .progress-step.active .progress-num { color: var(--ink); }
+  .progress-step.done { color: var(--muted); }
+  .progress-step.done .progress-num { color: var(--accent); }
+  .progress-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+    margin: 0 20px;
+    min-width: 30px;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    margin-bottom: 32px;
+  }
+  .page-headline {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.12;
+    letter-spacing: -0.4px;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .page-dek {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  /* ── NOTE LIST ── */
+  .note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .note-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 22px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: background 0.15s;
+    gap: 16px;
+  }
+  .note-item:hover { background: #fdfdfb; }
+  .note-item.selected { background: #faf9f6; }
+  .note-item + .note-item { border-top: 1px solid var(--rule); }
+
+  .note-select {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--faint);
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .note-item.selected .note-select {
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+  .note-item.selected .note-select::after {
+    content: '';
+    width: 5px; height: 9px;
+    border: solid #fff;
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg) translateY(-1px);
+  }
+
+  .note-body { flex: 1; min-width: 0; }
+  .note-title {
+    font-size: 15px; font-weight: 600; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .note-meta {
+    font-size: 12px; color: var(--faint);
+    margin-top: 3px;
+  }
+  .note-source {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ROW ── */
+  .action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .action-meta {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .action-meta strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.2px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn--primary {
+    background: var(--ink);
+    color: #fff;
+    border: none;
+  }
+  .btn--primary:hover { background: #333; }
+  .btn--outline {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--rule);
+  }
+  .btn--outline:hover { border-color: var(--muted); }
+  .btn-group { display: flex; gap: 10px; }
+
+  /* ── EXTRACTION ANIMATION ── */
+  .extraction-log {
+    display: flex;
+    flex-direction: column;
+    margin: 8px 0 24px;
+  }
+  .extraction-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+  }
+  .extraction-label { flex: 1; color: var(--ink); font-weight: 500; }
+  .extraction-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+  .extraction-status.done { color: var(--accent); }
+
+  /* ── REVIEW GRID ── */
+  .review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .review-filter {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+  }
+  .review-filter span {
+    color: var(--faint);
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .review-filter span.active {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .review-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .review-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.15s;
+  }
+  .review-item:last-child { border-bottom: none; }
+  .review-item:hover { background: #fdfdfb; }
+  .review-item.excluded { opacity: 0.35; }
+
+  .review-check {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--faint);
+    border-radius: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .review-item:not(.excluded) .review-check {
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+  .review-item:not(.excluded) .review-check::after {
+    content: '';
+    display: block;
+    width: 5px; height: 9px;
+    border: solid #fff;
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg) translateY(-1px);
+    margin: 3px 0 0 5px;
+  }
+
+  .review-word {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    font-style: italic;
+    min-width: 130px;
+  }
+  .review-def {
+    font-size: 14px;
+    color: var(--body);
+    flex: 1;
+  }
+  .review-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.6px;
+    flex-shrink: 0;
+  }
+  .tag-r { background: #f2f5f8; color: #4a7090; }
+  .tag-s { background: #faf6f0; color: #9a7030; }
+  .tag-w { background: #f0f5f2; color: #4a7058; }
+
+  .review-edit {
+    font-size: 12px;
+    color: var(--faint);
+    cursor: pointer;
+    transition: color 0.15s;
+    flex-shrink: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--rule);
+  }
+  .review-edit:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
+  /* ── COMPLETION ── */
+  .completion {
+    text-align: center;
+    padding: 48px 32px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .completion-headline {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--ink);
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .completion-dek {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .completion-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-bottom: 36px;
+  }
+  .completion-stat {
+    text-align: center;
+  }
+  .completion-stat-value {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--ink);
+    font-style: italic;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .completion-stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  @media (max-width: 520px) {
+    .page-headline { font-size: 30px; }
+    .review-word { font-size: 17px; min-width: 100px; }
+    .completion-stats { gap: 28px; }
+    .completion-stat-value { font-size: 32px; }
+    .note-source { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" id="app">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <span class="masthead-title">English Lab</span>
+    <span class="masthead-section">Library</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress" id="progress">
+    <span class="progress-step active" id="prog1"><span class="progress-num">1</span>Select</span>
+    <span class="progress-rule"></span>
+    <span class="progress-step" id="prog2"><span class="progress-num">2</span>Extract</span>
+    <span class="progress-rule"></span>
+    <span class="progress-step" id="prog3"><span class="progress-num">3</span>Review</span>
+    <span class="progress-rule"></span>
+    <span class="progress-step" id="prog4"><span class="progress-num">4</span>Import</span>
+  </div>
+
+  <!-- Dynamic Content Area -->
+  <div id="content"></div>
+
+</div>
+
+<script>
+  const content = document.getElementById('content');
+  const progress = document.getElementById('progress');
+
+  function setProgress(step) {
+    ['prog1','prog2','prog3','prog4'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.classList.remove('active','done');
+      if (i+1 < step) el.classList.add('done');
+      if (i+1 === step) el.classList.add('active');
+    });
+  }
+
+  function renderStep1() {
+    setProgress(1);
+    content.innerHTML = `
+      <div class="page-header">
+        <h1 class="page-headline">Select notes</h1>
+        <p class="page-dek">Choose which NotebookLM entries to extract vocabulary from. You'll review everything before it enters your library.</p>
+      </div>
+      <div class="note-list">
+        <div class="note-item selected" onclick="this.classList.toggle('selected')">
+          <div class="note-select"></div>
+          <div class="note-body">
+            <div class="note-title">Unit 1 — Classroom Notes</div>
+            <div class="note-meta">Edited May 28, 2026  ·  ~1,200 words</div>
+          </div>
+          <span class="note-source">NotebookLM</span>
+        </div>
+        <div class="note-item selected" onclick="this.classList.toggle('selected')">
+          <div class="note-select"></div>
+          <div class="note-body">
+            <div class="note-title">Reading Digest — The Economist</div>
+            <div class="note-meta">Edited May 25, 2026  ·  ~3,400 words</div>
+          </div>
+          <span class="note-source">NotebookLM</span>
+        </div>
+        <div class="note-item" onclick="this.classList.toggle('selected')">
+          <div class="note-select"></div>
+          <div class="note-body">
+            <div class="note-title">Business English Glossary</div>
+            <div class="note-meta">Edited May 20, 2026  ·  ~800 words</div>
+          </div>
+          <span class="note-source">NotebookLM</span>
+        </div>
+        <div class="note-item" onclick="this.classList.toggle('selected')">
+          <div class="note-select"></div>
+          <div class="note-body">
+            <div class="note-title">Meeting Notes — May 15</div>
+            <div class="note-meta">Edited May 15, 2026  ·  ~600 words</div>
+          </div>
+          <span class="note-source">NotebookLM</span>
+        </div>
+      </div>
+      <div class="action-row">
+        <span class="action-meta">Selected <strong>2</strong> of 4 notes  ·  Est. <strong>20–30</strong> words</span>
+        <div class="btn-group">
+          <button class="btn btn--outline">Cancel</button>
+          <button class="btn btn--primary" onclick="renderStep2()">Extract vocabulary</button>
+        </div>
+      </div>`;
+  }
+
+  function renderStep2() {
+    setProgress(2);
+    content.innerHTML = `
+      <div class="page-header">
+        <h1 class="page-headline">Extracting</h1>
+        <p class="page-dek">Analyzing 2 notes for vocabulary, phrases, and sentence patterns worth learning.</p>
+      </div>
+      <div class="extraction-log">
+        <div class="extraction-line">
+          <span class="extraction-label">Parsing document structure</span>
+          <span class="extraction-status done">Complete</span>
+        </div>
+        <div class="extraction-line">
+          <span class="extraction-label">Identifying word boundaries &amp; phrases</span>
+          <span class="extraction-status done">Complete</span>
+        </div>
+        <div class="extraction-line" id="extractLine1">
+          <span class="extraction-label">Extracting vocabulary via Gemini</span>
+          <span class="extraction-status">Processing…</span>
+        </div>
+        <div class="extraction-line" id="extractLine2">
+          <span class="extraction-label">Categorizing by training type</span>
+          <span class="extraction-status">Waiting…</span>
+        </div>
+        <div class="extraction-line" id="extractLine3">
+          <span class="extraction-label">Generating definitions &amp; examples</span>
+          <span class="extraction-status">Waiting…</span>
+        </div>
+      </div>
+      <div class="action-row">
+        <span class="action-meta" id="extractMeta">Extracting…</span>
+        <div class="btn-group">
+          <button class="btn btn--outline" onclick="renderStep1()">Back</button>
+          <button class="btn btn--primary" id="btnReview" style="opacity:0.4;pointer-events:none" onclick="renderStep3()">Review results</button>
+        </div>
+      </div>`;
+
+    // Simulate extraction
+    const lines = ['extractLine1','extractLine2','extractLine3'];
+    const delays = [1200, 2000, 2800];
+    lines.forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.querySelector('.extraction-status').textContent = 'Complete';
+          el.querySelector('.extraction-status').classList.add('done');
+        }
+        if (i === 2) {
+          document.getElementById('extractMeta').textContent = '23 items found';
+          const btn = document.getElementById('btnReview');
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'auto';
+        }
+      }, delays[i]);
+    });
+  }
+
+  function renderStep3() {
+    setProgress(3);
+    content.innerHTML = `
+      <div class="page-header">
+        <h1 class="page-headline">Review</h1>
+        <p class="page-dek">23 items extracted. Uncheck anything you don't want in your training library. Click the word to edit its definition.</p>
+      </div>
+      <div class="review-header">
+        <div class="review-filter">
+          <span class="active">All</span>
+          <span>Reading</span>
+          <span>Speaking</span>
+          <span>Writing</span>
+        </div>
+        <span class="review-count">23 items</span>
+      </div>
+      <div class="review-list">
+        <div class="review-item" onclick="this.classList.toggle('excluded')">
+          <div class="review-check"></div>
+          <span class="review-word">ubiquitous</span>
+          <span class="review-def">无处不在的，普遍存在的</span>
+          <span class="review-tag tag-r">Reading</span>
+          <span class="review-edit">edit</span>
+        </div>
+        <div class="review-item" onclick="this.classList.toggle('excluded')">
+          <div class="review-check"></div>
+          <span class="review-word">call it a day</span>
+          <span class="review-def">收工，到此为止</span>
+          <span class="review-tag tag-s">Speaking</span>
+          <span class="review-edit">edit</span>
+        </div>
+        <div class="review-item" onclick="this.classList.toggle('excluded')">
+          <div class="review-check"></div>
+          <span class="review-word">paradigm shift</span>
+          <span class="review-def">范式转移，根本性的思维转变</span>
+          <span class="review-tag tag-w">Writing</span>
+          <span class="review-edit">edit</span>
+        </div>
+        <div class="review-item" onclick="this.classList.toggle('excluded')">
+          <div class="review-check"></div>
+          <span class="review-word">cutting edge</span>
+          <span class="review-def">最前沿的，尖端的</span>
+          <span class="review-tag tag-r">Reading</span>
+          <span class="review-edit">edit</span>
+        </div>
+        <div class="review-item" onclick="this.classList.toggle('excluded')">
+          <div class="review-check"></div>
+          <span class="review-word">leverage</span>
+          <span class="review-def">充分利用，借助</span>
+          <span class="review-tag tag-w">Writing</span>
+          <span class="review-edit">edit</span>
+        </div>
+        <div class="review-item" onclick="this.classList.toggle('excluded')">
+          <div class="review-check"></div>
+          <span class="review-word">touch base</span>
+          <span class="review-def">联系一下，简短碰头</span>
+          <span class="review-tag tag-s">Speaking</span>
+          <span class="review-edit">edit</span>
+        </div>
+      </div>
+      <div class="action-row">
+        <span class="action-meta">Importing <strong>6</strong> of 6 items shown  ·  +17 more</span>
+        <div class="btn-group">
+          <button class="btn btn--outline" onclick="renderStep2()">Back</button>
+          <button class="btn btn--primary" onclick="renderStep4()">Import to library</button>
+        </div>
+      </div>`;
+  }
+
+  function renderStep4() {
+    setProgress(4);
+    content.innerHTML = `
+      <div class="completion">
+        <h2 class="completion-headline">Added to your library</h2>
+        <p class="completion-dek">22 words are now in your training queue, scheduled according to the Ebbinghaus curve.</p>
+        <div class="completion-stats">
+          <div class="completion-stat">
+            <div class="completion-stat-value">12</div>
+            <div class="completion-stat-label">Reading</div>
+          </div>
+          <div class="completion-stat">
+            <div class="completion-stat-value">6</div>
+            <div class="completion-stat-label">Speaking</div>
+          </div>
+          <div class="completion-stat">
+            <div class="completion-stat-value">4</div>
+            <div class="completion-stat-label">Writing</div>
+          </div>
+        </div>
+        <div class="btn-group" style="justify-content:center">
+          <button class="btn btn--outline" onclick="renderStep1()">Import more notes</button>
+          <button class="btn btn--primary">Begin training</button>
+        </div>
+      </div>`;
+  }
+
+  // Start at step 1
+  renderStep1();
+</script>
+
+</body>
+</html>

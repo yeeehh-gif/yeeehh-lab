@@ -1,0 +1,109 @@
+<h2>🗺️ 最终开发路线图（已确认）</h2>
+<p class="subtitle">决策1: 完整艾宾浩斯引擎 · 决策2: 阅读优先，架构预留口语/写作</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+  <div style="flex:1;min-width:200px;background:#2d6a4f;border-radius:10px;padding:18px">
+    <div style="font-size:12px;color:#52b788;font-weight:600">Phase 1 · 基础建设</div>
+    <div style="font-size:24px;font-weight:700;color:#fff;margin:8px 0">🏗️</div>
+    <div style="font-size:11px;color:#aaa">项目搭建 · 数据模型 · 内容管理 · 笔记导入</div>
+    <div style="margin-top:8px;background:#1b4332;border-radius:4px;padding:6px;font-size:12px;color:#52b788">预计 1-2 周</div>
+  </div>
+  <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+  <div style="flex:1;min-width:200px;background:#0f3460;border-radius:10px;padding:18px">
+    <div style="font-size:12px;color:#3a86ff;font-weight:600">Phase 2 · 核心训练</div>
+    <div style="font-size:24px;font-weight:700;color:#fff;margin:8px 0">🧠</div>
+    <div style="font-size:11px;color:#aaa">艾宾浩斯引擎 · 阅读训练 · 错题闭环</div>
+    <div style="margin-top:8px;background:#16213e;border-radius:4px;padding:6px;font-size:12px;color:#3a86ff">预计 2-3 周</div>
+  </div>
+  <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+  <div style="flex:1;min-width:200px;background:#533483;border-radius:10px;padding:18px">
+    <div style="font-size:12px;color:#ff6b6b;font-weight:600">Phase 3 · 扩展训练</div>
+    <div style="font-size:24px;font-weight:700;color:#fff;margin:8px 0">📝</div>
+    <div style="font-size:11px;color:#aaa">写作训练 · 口语训练（文本） · 统计面板</div>
+    <div style="margin-top:8px;background:#2d1b69;border-radius:4px;padding:6px;font-size:12px;color:#ff6b6b">预计 2-3 周</div>
+  </div>
+  <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+  <div style="flex:1;min-width:200px;background:#e76f51;border-radius:10px;padding:18px">
+    <div style="font-size:12px;color:#ffb703;font-weight:600">Phase 4 · 进阶完善</div>
+    <div style="font-size:24px;font-weight:700;color:#fff;margin:8px 0">🚀</div>
+    <div style="font-size:11px;color:#aaa">TTS 语音 · PWA · 口语评测 · 目标提醒</div>
+    <div style="margin-top:8px;background:#7b2c1f;border-radius:4px;padding:6px;font-size:12px;color:#ffb703">预计 2-3 周</div>
+  </div>
+</div>
+
+<div class="section"><h3>🏗️ Phase 1 · 基础建设</h3></div>
+<div class="mockup">
+  <div class="mockup-body">
+    <table style="width:100%;font-size:13px;border-collapse:collapse;color:#ccc">
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#52b788;width:50px">1.1</td><td style="padding:6px 8px">项目脚手架搭建</td><td style="padding:6px 8px;font-size:11px;color:#888">Next.js + TS + Tailwind + shadcn/ui + Supabase</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#52b788">1.2</td><td style="padding:6px 8px">数据库模型设计</td><td style="padding:6px 8px;font-size:11px;color:#888">User → Note → Word/Phrase/Sentence → TrainingRecord → ErrorLog</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#52b788">1.3</td><td style="padding:6px 8px">用户认证</td><td style="padding:6px 8px;font-size:11px;color:#888">Supabase Auth + 邮箱登录</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#52b788">1.4</td><td style="padding:6px 8px">M2 内容管理 CRUD</td><td style="padding:6px 8px;font-size:11px;color:#888">单词/短语/句式增删改查，搜索筛选，来源追溯</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#52b788">1.5</td><td style="padding:6px 8px">M1 笔记导入（四步流程）</td><td style="padding:6px 8px;font-size:11px;color:#888">NotebookLM → 选笔记 → Gemini 提取 → 审核确认 → 入库</td></tr>
+      <tr><td style="padding:6px 8px;color:#52b788">1.6</td><td style="padding:6px 8px">基础 UI 布局</td><td style="padding:6px 8px;font-size:11px;color:#888">导航框架 + 首页 + 响应式</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section"><h3>🧠 Phase 2 · 核心训练（阅读优先）</h3></div>
+<div class="mockup">
+  <div class="mockup-header">🔑 策略：架构预留口语/写作扩展接口，但只实现阅读训练</div>
+  <div class="mockup-body">
+    <table style="width:100%;font-size:13px;border-collapse:collapse;color:#ccc">
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#3a86ff;width:50px">2.1</td><td style="padding:6px 8px">M3 完整艾宾浩斯调度引擎</td><td style="padding:6px 8px;font-size:11px;color:#888">遗忘曲线 1/2/4/7/15/30 天 + 每日队列 + 优先级排序</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#3a86ff">2.2</td><td style="padding:6px 8px">训练统一框架</td><td style="padding:6px 8px;font-size:11px;color:#888">训练引擎抽象层（Trainer 接口），阅读/写作/口语共用调度+评分+错题管道</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#3a86ff">2.3</td><td style="padding:6px 8px">M4 阅读训练（四题型）</td><td style="padding:6px 8px;font-size:11px;color:#888">闪卡 → 翻译练习 → 完形填空 → 阅读理解，实现 TrainReader 接口</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#3a86ff">2.4</td><td style="padding:6px 8px">M6 错题强化闭环</td><td style="padding:6px 8px;font-size:11px;color:#888">错题自动收录 → 短间隔重排 → 3 次正确释放</td></tr>
+      <tr><td style="padding:6px 8px;color:#3a86ff">2.5</td><td style="padding:6px 8px">端到端验证</td><td style="padding:6px 8px;font-size:11px;color:#888">导入 → 阅读训练 → 艾宾浩斯复习 → 错题重做，完整闭环可日常使用</td></tr>
+    </table>
+    <div style="margin-top:12px;background:#16213e;border-radius:6px;padding:10px;font-size:12px;color:#888">
+      <span style="color:#3a86ff">💡 架构预留：</span>Trainer 接口已定义好 → Phase 3 只要实现 TrainWriter + TrainSpeaker，无需改调度引擎和错题系统
+    </div>
+  </div>
+</div>
+
+<div class="section"><h3>📝 Phase 3 · 扩展训练</h3></div>
+<div class="mockup">
+  <div class="mockup-body">
+    <table style="width:100%;font-size:13px;border-collapse:collapse;color:#ccc">
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#ff6b6b;width:50px">3.1</td><td style="padding:6px 8px">M4 写作训练</td><td style="padding:6px 8px;font-size:11px;color:#888">实现 TrainWriter：中译英 + 造句 + 主题写作，Gemini API 评分纠正</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#ff6b6b">3.2</td><td style="padding:6px 8px">M4 口语训练（文本）</td><td style="padding:6px 8px;font-size:11px;color:#888">实现 TrainSpeaker：中文提示 → 英文输出 → 自评模式</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#ff6b6b">3.3</td><td style="padding:6px 8px">M5 进度统计面板</td><td style="padding:6px 8px;font-size:11px;color:#888">热力图 + 掌握率 + 词汇量曲线</td></tr>
+      <tr><td style="padding:6px 8px;color:#ff6b6b">3.4</td><td style="padding:6px 8px">A1 目标设定与提醒</td><td style="padding:6px 8px;font-size:11px;color:#888">每日目标 + 推送通知 + 连续打卡</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section"><h3>🚀 Phase 4 · 进阶完善</h3></div>
+<div class="mockup">
+  <div class="mockup-body">
+    <table style="width:100%;font-size:13px;border-collapse:collapse;color:#ccc">
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#ffb703;width:50px">4.1</td><td style="padding:6px 8px">A2 TTS 语音增强</td><td style="padding:6px 8px;font-size:11px;color:#888">单词发音 + 例句朗读 + 跟读模式 + AI 口语评测</td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:6px 8px;color:#ffb703">4.2</td><td style="padding:6px 8px">A3 PWA 离线支持</td><td style="padding:6px 8px;font-size:11px;color:#888">Service Worker + 离线训练 + 桌面安装 + 同步策略</td></tr>
+      <tr><td style="padding:6px 8px;color:#ffb703">4.3</td><td style="padding:6px 8px">最终打磨</td><td style="padding:6px 8px;font-size:11px;color:#888">性能优化 + 全流程回归 + 体验润色</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <h3>📊 模块交付时间线</h3>
+</div>
+<div class="mockup">
+  <div class="mockup-body">
+    <table style="width:100%;font-size:12px;border-collapse:collapse;color:#ccc">
+      <tr style="background:#1a1a2e"><th style="padding:8px;text-align:left">模块</th><th style="padding:8px;text-align:center">Phase 1</th><th style="padding:8px;text-align:center">Phase 2</th><th style="padding:8px;text-align:center">Phase 3</th><th style="padding:8px;text-align:center">Phase 4</th></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M1 笔记导入</td><td style="text-align:center">✅</td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M2 内容管理</td><td style="text-align:center">✅</td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M3 调度引擎</td><td style="text-align:center"></td><td style="text-align:center">✅</td><td style="text-align:center"></td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M4 阅读训练</td><td style="text-align:center"></td><td style="text-align:center">✅</td><td style="text-align:center"></td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M4 写作训练</td><td style="text-align:center"></td><td style="text-align:center">🔌</td><td style="text-align:center">✅</td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M4 口语训练</td><td style="text-align:center"></td><td style="text-align:center">🔌</td><td style="text-align:center">✅</td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M5 统计面板</td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center">✅</td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">M6 错题闭环</td><td style="text-align:center"></td><td style="text-align:center">✅</td><td style="text-align:center"></td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">A1 目标提醒</td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center">✅</td><td style="text-align:center"></td></tr>
+      <tr style="border-bottom:1px solid #333"><td style="padding:8px">A2 TTS 语音</td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center">✅</td></tr>
+      <tr><td style="padding:8px">A3 PWA</td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center"></td><td style="text-align:center">✅</td></tr>
+    </table>
+    <div style="margin-top:8px;font-size:11px;color:#888">🔌 = 架构预留接口，后续实现</div>
+  </div>
+</div>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Lab — Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf8f4;
+    --paper: #fffef9;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --body: #555555;
+    --muted: #999999;
+    --faint: #bbbbbb;
+    --border: #e8e4dc;
+    --gold: #f0c040;
+    --gold-dark: #c4a030;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.02);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.03), 0 8px 32px rgba(0,0,0,0.02);
+    --shadow-comic: 5px 5px 0 #d4cfc4;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: var(--font-ui);
+    color: var(--body);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* ── Main Container ── */
+  .app-shell {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+  }
+  .topbar-brand {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+  .topbar-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    background: #f0ede6;
+    padding: 4px 10px;
+    border-radius: 5px;
+    letter-spacing: 0.8px;
+  }
+  .topbar-status {
+    font-size: 11px;
+    color: var(--faint);
+    font-weight: 500;
+  }
+
+  /* ── Progress ── */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--faint);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .progress-track {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+  }
+  .progress-seg {
+    height: 3px;
+    border-radius: 2px;
+    flex: 1;
+    transition: background 0.4s ease;
+  }
+  .progress-seg.done { background: var(--ink); }
+  .progress-seg.pending { background: #e8e4dc; }
+  .progress-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ── Flashcard ── */
+  .flashcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 48px 32px 40px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+  }
+  .flashcard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.02);
+  }
+  .flashcard:active {
+    transform: scale(0.985);
+  }
+
+  /* Paper texture overlay */
+  .flashcard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: var(--radius-md);
+  }
+
+  .flashcard > * { position: relative; z-index: 1; }
+
+  .card-category {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--faint);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    font-family: var(--font-ui);
+  }
+  .card-word {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.05;
+    margin-bottom: 6px;
+    letter-spacing: -1px;
+    transition: color 0.3s ease;
+  }
+  .card-phonetic {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--faint);
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .card-pos {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+  .card-hint {
+    display: inline-block;
+    padding: 7px 20px;
+    border: 1px solid #e8e4dc;
+    border-radius: 100px;
+    font-size: 11px;
+    color: var(--faint);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+  }
+  .card-hint:hover {
+    border-color: #ccc;
+    color: var(--muted);
+  }
+
+  /* ── Flipped state ── */
+  .flashcard.flipped .card-word { font-size: 28px; }
+  .flashcard.flipped .card-detail {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #f0ece4;
+  }
+  .card-detail { display: none; }
+  .flashcard.flipped .card-detail { display: grid; }
+  .flashcard.flipped .card-hint { display: none; }
+  .card-detail-label {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .card-detail-value { color: var(--ink); font-weight: 500; }
+  .card-detail-value b { color: var(--ink); font-weight: 700; }
+
+  /* ── Buttons (Comic Style) ── */
+  .button-row {
+    display: flex;
+    gap: 10px;
+  }
+  .btn {
+    flex: 1;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 14px 8px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: var(--shadow-comic);
+    transition: all 0.15s ease;
+    position: relative;
+    text-align: center;
+  }
+  .btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 7px 7px 0 #d4cfc4;
+  }
+  .btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 #d4cfc4;
+  }
+  .btn--no {
+    background: #fff;
+    color: #c44;
+  }
+  .btn--maybe {
+    background: #fff;
+    color: var(--gold-dark);
+  }
+  .btn--yes {
+    background: var(--ink);
+    color: var(--gold);
+  }
+
+  /* ── Feedback Overlay ── */
+  .feedback {
+    display: none;
+    margin-top: -8px;
+    padding: 20px 24px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    box-shadow: var(--shadow-comic);
+    position: relative;
+    overflow: hidden;
+    animation: feedbackIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .feedback.show { display: block; }
+
+  @keyframes feedbackIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Halftone dots for correct feedback */
+  .feedback--correct {
+    background: #fdfaee;
+  }
+  .feedback--correct::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, var(--gold) 1.8px, transparent 1.8px);
+    background-size: 10px 10px;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .feedback--wrong {
+    background: #fff;
+  }
+
+  .feedback-emoji {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .feedback-title {
+    font-family: var(--font-ui);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .feedback-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+  .feedback-meta {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+  .feedback-meta span { font-weight: 500; }
+  .feedback-meta b { color: var(--ink); font-weight: 700; }
+
+  /* ── Nav ── */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .btn--ghost {
+    background: #fff;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    color: var(--faint);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .btn--primary {
+    flex: 2;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    box-shadow: var(--shadow-sm);
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* ── Bottom Stats ── */
+  .bottombar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 4px;
+    font-size: 10px;
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .bottombar .streak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .streak-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .app-shell { gap: 16px; }
+    .flashcard { padding: 36px 20px 32px; }
+    .card-word { font-size: 36px; }
+    .flashcard.flipped .card-word { font-size: 24px; }
+    .btn { font-size: 12px; padding: 12px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell" id="app">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div style="display:flex;align-items:baseline;gap:12px">
+      <span class="topbar-brand">English Lab</span>
+      <span class="topbar-badge">READING</span>
+    </div>
+    <span class="topbar-status">Training · In Progress</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-row">
+    <span class="progress-label">Progress</span>
+    <div class="progress-track">
+      <div class="progress-seg done"></div>
+      <div class="progress-seg done"></div>
+      <div class="progress-seg done"></div>
+      <div class="progress-seg" id="seg4"></div>
+      <div class="progress-seg pending" id="seg5"></div>
+    </div>
+    <span class="progress-num">3 / 5</span>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="flashcard" id="flashcard" onclick="flipCard()">
+    <div class="card-category">Reading · Vocabulary</div>
+    <div class="card-word" id="cardWord">ubiquitous</div>
+    <div class="card-phonetic">/juːˈbɪk.wɪ.təs/</div>
+    <div class="card-pos">adjective</div>
+    <div class="card-hint">tap to reveal meaning</div>
+    <div class="card-detail" id="cardDetail">
+      <span class="card-detail-label">释义</span>
+      <span class="card-detail-value">无处不在的，普遍存在的</span>
+      <span class="card-detail-label">例句</span>
+      <span class="card-detail-value">The internet has become <b>ubiquitous</b> in modern life.</span>
+      <span class="card-detail-label">笔记</span>
+      <span class="card-detail-value">Unit 3 · Technology & Society</span>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="button-row" id="actionButtons">
+    <button class="btn btn--no" onclick="handleAnswer('wrong')">NOPE</button>
+    <button class="btn btn--maybe" onclick="handleAnswer('maybe')">HMM...</button>
+    <button class="btn btn--yes" onclick="handleAnswer('correct')">GOT IT!</button>
+  </div>
+
+  <!-- Feedback (hidden by default) -->
+  <div class="feedback" id="feedback"></div>
+
+  <!-- Navigation (hidden by default) -->
+  <div class="nav-row" id="navRow" style="display:none">
+    <button class="btn btn--ghost" style="flex:1" onclick="prevWord()">← Prev</button>
+    <button class="btn btn--primary" onclick="nextWord()">Next word →</button>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottombar">
+    <span class="streak"><span class="streak-dot"></span> 7-day streak</span>
+    <span>⏰ Next review · Tomorrow</span>
+  </div>
+</div>
+
+<script>
+  let isFlipped = false;
+  let answered = false;
+
+  function flipCard() {
+    if (answered) return;
+    isFlipped = !isFlipped;
+    const card = document.getElementById('flashcard');
+    if (isFlipped) {
+      card.classList.add('flipped');
+    } else {
+      card.classList.remove('flipped');
+    }
+  }
+
+  function handleAnswer(type) {
+    if (answered) return;
+    answered = true;
+
+    // Ensure card is flipped to show answer
+    const card = document.getElementById('flashcard');
+    if (!isFlipped) {
+      isFlipped = true;
+      card.classList.add('flipped');
+    }
+
+    // Hide buttons
+    document.getElementById('actionButtons').style.display = 'none';
+
+    // Show feedback
+    const fb = document.getElementById('feedback');
+    if (type === 'correct') {
+      fb.className = 'feedback feedback--correct show';
+      fb.innerHTML = `
+        <span class="feedback-emoji">💥</span>
+        <div class="feedback-title">POW!</div>
+        <div class="feedback-sub">Nailed it! +1 mastery point</div>
+        <div class="feedback-meta">
+          <span>⭐ Mastery <b>+1</b></span>
+          <span>📅 Next review <b>7 days</b></span>
+        </div>`;
+    } else if (type === 'maybe') {
+      fb.className = 'feedback feedback--wrong show';
+      fb.innerHTML = `
+        <span class="feedback-emoji">🤔</span>
+        <div class="feedback-title">HMM...</div>
+        <div class="feedback-sub">Almost there — this one will come back sooner</div>
+        <div class="feedback-meta">
+          <span>🔁 Reappears in <b>2 days</b></span>
+          <span>📊 Attempt <b>1/3</b> to release</span>
+        </div>`;
+    } else {
+      fb.className = 'feedback feedback--wrong show';
+      fb.innerHTML = `
+        <span class="feedback-emoji">📖</span>
+        <div class="feedback-title">NOPE!</div>
+        <div class="feedback-sub">No worries — back in the queue. You'll get it next time.</div>
+        <div class="feedback-meta">
+          <span>🔁 Reappears in <b>1 day</b></span>
+          <span>📊 Attempt <b>1/3</b> to release</span>
+        </div>`;
+    }
+
+    // Show nav
+    document.getElementById('navRow').style.display = 'flex';
+
+    // Update progress
+    document.getElementById('seg4').classList.add('done');
+  }
+
+  function nextWord() {
+    // Reset state for next word (demo cycle)
+    answered = false;
+    isFlipped = false;
+    document.getElementById('flashcard').classList.remove('flipped');
+    document.getElementById('actionButtons').style.display = 'flex';
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('navRow').style.display = 'none';
+    document.getElementById('seg5').classList.add('done');
+    document.querySelector('.progress-num').textContent = '5 / 5';
+    document.getElementById('cardWord').textContent = 'ephemeral';
+    document.querySelector('.card-phonetic').textContent = '/ɪˈfem.ər.əl/';
+    document.querySelector('.card-pos').textContent = 'adjective';
+    document.getElementById('cardDetail').innerHTML = `
+      <span class="card-detail-label">释义</span>
+      <span class="card-detail-value">短暂的，转瞬即逝的</span>
+      <span class="card-detail-label">例句</span>
+      <span class="card-detail-value">The beauty of cherry blossoms is <b>ephemeral</b> but unforgettable.</span>
+      <span class="card-detail-label">笔记</span>
+      <span class="card-detail-value">Unit 5 · Nature & Time</span>`;
+  }
+
+  function prevWord() {
+    // Back to first word for demo
+    answered = false;
+    isFlipped = false;
+    document.getElementById('flashcard').classList.remove('flipped');
+    document.getElementById('actionButtons').style.display = 'flex';
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('navRow').style.display = 'none';
+    document.getElementById('seg4').classList.remove('done');
+    document.getElementById('seg5').classList.remove('done');
+    document.querySelector('.progress-num').textContent = '3 / 5';
+    document.getElementById('cardWord').textContent = 'ubiquitous';
+    document.querySelector('.card-phonetic').textContent = '/juːˈbɪk.wɪ.təs/';
+    document.querySelector('.card-pos').textContent = 'adjective';
+    document.getElementById('cardDetail').innerHTML = `
+      <span class="card-detail-label">释义</span>
+      <span class="card-detail-value">无处不在的，普遍存在的</span>
+      <span class="card-detail-label">例句</span>
+      <span class="card-detail-value">The internet has become <b>ubiquitous</b> in modern life.</span>
+      <span class="card-detail-label">笔记</span>
+      <span class="card-detail-value">Unit 3 · Technology & Society</span>`;
+  }
+</script>
+
+</body>
+</html>

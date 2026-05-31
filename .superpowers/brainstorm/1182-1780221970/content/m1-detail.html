@@ -1,0 +1,110 @@
+<h2>🔄 M1 模块细化 — 选择性导入流程</h2>
+<p class="subtitle">用户全程掌控：选择笔记 → 预览提取结果 → 勾选确认 → 入库</p>
+
+<div class="mockup">
+  <div class="mockup-header">M1 · 笔记导入与AI提取 — 四步选择流程</div>
+  <div class="mockup-body" style="font-size:14px;line-height:2">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch">
+
+      <div style="flex:1;min-width:160px;background:#1a1a2e;border-radius:8px;padding:14px;border-left:3px solid #e94560">
+        <div style="font-weight:700;color:#e94560;margin-bottom:6px">Step 1 · 选择笔记</div>
+        <div style="font-size:12px;color:#aaa">
+          📋 拉取 NotebookLM 笔记列表<br>
+          ✅ 勾选要导入的笔记<br>
+          ⏭️ 不需要的跳过
+        </div>
+        <div style="margin-top:8px;background:#16213e;border-radius:4px;padding:8px;font-size:11px;color:#888">
+          <input type="checkbox" checked style="margin-right:4px"> Unit 1 课堂笔记<br>
+          <input type="checkbox" checked style="margin-right:4px"> 阅读摘录 - The Economist<br>
+          <input type="checkbox" style="margin-right:4px"> 商务英语术语表<br>
+          <input type="checkbox" style="margin-right:4px"> 会议记录 5/20
+        </div>
+      </div>
+
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+
+      <div style="flex:1;min-width:160px;background:#1a1a2e;border-radius:8px;padding:14px;border-left:3px solid #3a86ff">
+        <div style="font-weight:700;color:#3a86ff;margin-bottom:6px">Step 2 · AI 提取</div>
+        <div style="font-size:12px;color:#aaa">
+          🤖 Gemini API 分析选中笔记<br>
+          📝 提取：单词 / 短语 / 句式<br>
+          🏷️ 自动标注：口语 / 阅读 / 写作
+        </div>
+        <div style="margin-top:8px;background:#16213e;border-radius:4px;padding:8px;font-size:11px;color:#888">
+          提取中...<br>
+          · ubiquitous (adj.) → 阅读<br>
+          · call it a day → 口语<br>
+          · The evidence suggests that... → 写作
+        </div>
+      </div>
+
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+
+      <div style="flex:1;min-width:160px;background:#1a1a2e;border-radius:8px;padding:14px;border-left:3px solid #f77f00">
+        <div style="font-weight:700;color:#f77f00;margin-bottom:6px">Step 3 · 审核确认</div>
+        <div style="font-size:12px;color:#aaa">
+          👀 预览所有提取结果<br>
+          ✅ 逐条勾选需要的<br>
+          ✏️ 可手动编辑/补充释义<br>
+          ❌ 去掉不相关的内容
+        </div>
+        <div style="margin-top:8px;background:#16213e;border-radius:4px;padding:8px;font-size:11px;color:#888">
+          <input type="checkbox" checked> ubiquitous — 无处不在的<br>
+          <input type="checkbox" checked> call it a day — 收工<br>
+          <input type="checkbox"> The evidence suggests... <span style="color:#f77f00">✏️编辑</span><br>
+          <input type="checkbox" style="margin-left:8px"> ... that we should reconsider ✏️
+        </div>
+      </div>
+
+      <div style="color:#aaa;display:flex;align-items:center;font-size:20px">→</div>
+
+      <div style="flex:1;min-width:160px;background:#1a1a2e;border-radius:8px;padding:14px;border-left:3px solid #52b788">
+        <div style="font-weight:700;color:#52b788;margin-bottom:6px">Step 4 · 入库分类</div>
+        <div style="font-size:12px;color:#aaa">
+          💾 确认的内容写入内容库<br>
+          🏷️ 按训练类型归档<br>
+          🔗 保留来源笔记链接<br>
+          🧠 自动加入艾宾浩斯队列
+        </div>
+        <div style="margin-top:8px;background:#16213e;border-radius:4px;padding:8px;font-size:11px;color:#52b788">
+          ✅ 12 个单词 → 内容库<br>
+          ✅ 3 个短语 → 内容库<br>
+          ✅ 2 个句式 → 内容库<br>
+          🔗 来源: Unit 1 课堂笔记
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>与旧版对比</h3>
+</div>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header" style="color:#e94560">❌ 旧：全自动导入</div>
+    <div class="mockup-body">
+      <p style="font-size:13px;color:#aaa">上传笔记 → AI全量提取 → 全部入库</p>
+      <p style="font-size:12px;color:#888">问题：AI 可能提取不相关的内容，内容库被污染</p>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header" style="color:#52b788">✅ 新：选择性导入</div>
+    <div class="mockup-body">
+      <p style="font-size:13px;color:#aaa">选择笔记 → 预览提取 → 勾选确认 → 入库</p>
+      <p style="font-size:12px;color:#888">优势：用户全程掌控，内容精准，支持手动补充</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;background:#1a1a2e;border-radius:8px;padding:16px">
+  <h4 style="color:#f77f00;margin-top:0">🔑 关键设计决策</h4>
+  <ul style="font-size:13px;color:#aaa;line-height:1.8">
+    <li><strong>每次导入都需要确认</strong> — 不做静默入库，AI 建议 =/= 最终决定</li>
+    <li><strong>支持手动补充</strong> — 审核阶段可以编辑释义、添加笔记、修改分类</li>
+    <li><strong>保留来源追溯</strong> — 每条内容记录来自哪篇笔记，方便回顾上下文</li>
+    <li><strong>跳过不处理</strong> — 不想导入的笔记完全忽略，不做任何后台处理</li>
+  </ul>
+</div>
