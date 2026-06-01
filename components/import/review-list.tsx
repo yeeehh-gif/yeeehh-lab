@@ -3,17 +3,14 @@
 import { useState } from "react"
 import type { ExtractedItem } from "@/types"
 
-const mockItems: ExtractedItem[] = [
-  { word: "ubiquitous", phonetic: "/juːˈbɪk.wɪ.təs/", part_of_speech: "adj.", definition: "无处不在的，普遍存在的", example_sentence: "The internet has become ubiquitous in modern life.", category: "reading", source_note: "Unit 1", selected: true },
-  { word: "call it a day", definition: "收工，到此为止", example_sentence: "Let's call it a day and continue tomorrow.", category: "speaking", source_note: "Unit 1", selected: true },
-  { word: "paradigm shift", definition: "范式转移，根本性的思维转变", example_sentence: "The internet caused a paradigm shift in communication.", category: "writing", source_note: "The Economist", selected: true },
-  { word: "cutting edge", definition: "最前沿的，尖端的", category: "reading", source_note: "The Economist", selected: true },
-  { word: "leverage", definition: "充分利用，借助", category: "writing", source_note: "Business Glossary", selected: true },
-  { word: "touch base", definition: "联系一下，简短碰头", category: "speaking", source_note: "Meeting Notes", selected: true },
-]
-
-export function ReviewList({ onNext }: { onNext: (items: ExtractedItem[]) => void }) {
-  const [items, setItems] = useState(mockItems)
+export function ReviewList({
+  items: initialItems,
+  onNext,
+}: {
+  items: ExtractedItem[]
+  onNext: (items: ExtractedItem[]) => void
+}) {
+  const [items, setItems] = useState(initialItems.map((it) => ({ ...it, selected: it.selected ?? true })))
   const [filter, setFilter] = useState<"all" | "reading" | "speaking" | "writing">("all")
 
   function toggle(index: number) {

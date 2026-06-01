@@ -58,8 +58,17 @@ export interface ImportSession {
 }
 
 // M1 import types
+export interface NotebookLMNotebook {
+  id: string
+  name: string
+  source_count: number
+  updated_at: string
+}
+
 export interface NotebookLMNote {
   id: string
+  notebook_id: string
+  notebook_name: string
   title: string
   updated_at: string
   word_count: number

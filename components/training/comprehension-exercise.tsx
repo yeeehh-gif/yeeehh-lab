@@ -8,7 +8,7 @@ export function ComprehensionExercise({
   onAnswer,
 }: {
   question: TrainingQuestion
-  onAnswer: (result: "correct" | "maybe" | "wrong") => void
+  onAnswer: (result: "correct" | "maybe" | "wrong", userAnswer?: string) => void
 }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
@@ -22,7 +22,7 @@ export function ComprehensionExercise({
     if (!selected) return
     const correct = question.correctAnswer === selected ? "correct" as const : "wrong" as const
     setSubmitted(true)
-    onAnswer(correct)
+    onAnswer(correct, selected || "")
   }
 
   return (

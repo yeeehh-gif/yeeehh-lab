@@ -8,7 +8,7 @@ export function ClozeExercise({
   onAnswer,
 }: {
   question: TrainingQuestion
-  onAnswer: (result: "correct" | "maybe" | "wrong") => void
+  onAnswer: (result: "correct" | "maybe" | "wrong", userAnswer?: string) => void
 }) {
   const [input, setInput] = useState("")
   const [submitted, setSubmitted] = useState(false)
@@ -21,7 +21,7 @@ export function ClozeExercise({
     if (response === correct) result = "correct"
     else if (correct.includes(response) || response.includes(correct)) result = "maybe"
     setSubmitted(true)
-    onAnswer(result)
+    onAnswer(result, input)
   }
 
   return (

@@ -12,6 +12,13 @@ export function Flashcard({
   onAnswer: (result: "correct" | "maybe" | "wrong") => void
 }) {
   const [flipped, setFlipped] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const answer = (result: "correct" | "maybe" | "wrong") => {
+    if (submitted) return
+    setSubmitted(true)
+    onAnswer(result)
+  }
 
   if (!flipped) {
     return (
@@ -62,19 +69,19 @@ export function Flashcard({
 
       <div className="flex gap-3 w-full max-w-md">
         <button
-          onClick={() => onAnswer("wrong")}
+          onClick={() => answer("wrong")}
           className="flex-1 bg-white border-2 border-ink text-[#c44] font-bold text-sm py-3 rounded-lg shadow-[4px_4px_0_#d4cfc4] hover:shadow-[6px_6px_0_#d4cfc4] hover:-translate-y-0.5 active:shadow-[2px_2px_0_#d4cfc4] active:translate-y-0.5 transition-all"
         >
           NOPE
         </button>
         <button
-          onClick={() => onAnswer("maybe")}
+          onClick={() => answer("maybe")}
           className="flex-1 bg-white border-2 border-ink text-[#c4a030] font-bold text-sm py-3 rounded-lg shadow-[4px_4px_0_#d4cfc4] hover:shadow-[6px_6px_0_#d4cfc4] hover:-translate-y-0.5 active:shadow-[2px_2px_0_#d4cfc4] active:translate-y-0.5 transition-all"
         >
           HMM...
         </button>
         <button
-          onClick={() => onAnswer("correct")}
+          onClick={() => answer("correct")}
           className="flex-1 bg-charcoal border-2 border-ink text-gold font-bold text-sm py-3 rounded-lg shadow-[4px_4px_0_#d4cfc4] hover:shadow-[6px_6px_0_#d4cfc4] hover:-translate-y-0.5 active:shadow-[2px_2px_0_#d4cfc4] active:translate-y-0.5 transition-all"
         >
           GOT IT!

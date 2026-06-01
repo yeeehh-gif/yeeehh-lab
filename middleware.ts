@@ -19,13 +19,25 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  let isLoggedIn = false
 
-  if (!user && !request.nextUrl.pathname.startsWith("/login")) {
+  // 先试 cookie 的 session
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    isLoggedIn = true
+  } else {
+    // 兜底：直接调 API 验证（移动端 cookie 可能延迟）
+    const { data: { user } } = await supabase.auth.getUser()
+    isLoggedIn = !!user
+  }
+
+  const isLoginPage = request.nextUrl.pathname.startsWith("/login")
+
+  if (!isLoggedIn && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  if (user && request.nextUrl.pathname.startsWith("/login")) {
+  if (isLoggedIn && isLoginPage) {
     return NextResponse.redirect(new URL("/dashboard", request.url))
   }
 
