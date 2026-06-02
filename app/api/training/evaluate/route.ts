@@ -42,19 +42,26 @@ export async function POST(request: Request) {
     let userPrompt = ""
 
     if (category === "writing") {
-      // 写作评估：详细的 AI 评判
-      systemPrompt = `You are an English writing coach. Evaluate the student's answer fairly and constructively.
+      // 写作评估：三级评分 + 更优表达
+      systemPrompt = `You are an English writing coach. Evaluate the student's answer.
 Always respond in this exact JSON format (no markdown, no other text):
-{"score":"correct|maybe|wrong","feedback":"Your constructive feedback in Chinese (2-3 sentences)","correction":"A better version of the answer if needed, or empty string if fine","highlights":["good point 1","area to improve 1"]}`
-      userPrompt = `Task: ${questionType === "translation" ? "Translate to English" : questionType === "comprehension" ? "Write about this topic" : "Write a sentence"}
+{"score":"pass|needs_improvement|fail","feedback":"Your constructive feedback in Chinese (2-3 sentences)","better_expression":"A more natural/idiomatic English version of the student's answer","highlights":["good point or area to improve"]}
+
+Scoring criteria (strict):
+- "pass": Grammar is CORRECT and expression is NATURAL/IDIOMATIC. The sentence sounds like something a native speaker would say.
+- "needs_improvement": Grammar is CORRECT but expression is AWKWARD/UNNATURAL. The sentence is grammatically valid but sounds stiff, translated, or not idiomatic.
+- "fail": Grammar has ERRORS (tense, agreement, word order, missing articles, wrong prepositions, etc.)
+
+CRITICAL: Always provide a "better_expression" field — a rewritten version that is grammatically correct AND natural/idiomatic. If the answer is already perfect, provide a slight stylistic variation. If the answer has grammar errors, provide the corrected version. If the answer is grammatical but awkward, provide the natural version.`
+      userPrompt = `Task: Write in English
 Prompt: ${word}
-Example/reference answer: ${correctAnswer}
+Reference answer: ${correctAnswer}
 Student's answer: ${userAnswer}
 
-Evaluate the answer. Consider: grammar, vocabulary usage, naturalness, whether the target word/phrase was used correctly.
-Score "correct" if the answer is good and uses the target language correctly.
-Score "maybe" if mostly correct but has minor issues.
-Score "wrong" if major errors or didn't use the target word/phrase.`
+Evaluate the answer carefully:
+1. Check grammar correctness (tenses, agreement, word order, articles, prepositions, etc.)
+2. Check naturalness (does it sound like native English, or is it awkward/translated?)
+3. Provide a better_expression that is both grammatically correct and natural-sounding.`
     } else if (questionType === "comprehension") {
       // 选择题评估保持不变（已经由前端判断）
       systemPrompt = `You evaluate multiple-choice comprehension answers. Respond ONLY with JSON: {"score":"correct|wrong"}`

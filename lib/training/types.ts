@@ -3,7 +3,7 @@ import type { Vocabulary } from "@/types"
 export interface TrainingQuestion {
   id: string
   vocabularyId: string
-  type: "flashcard" | "translation" | "cloze" | "comprehension"
+  type: "flashcard" | "translation" | "cloze" | "comprehension" | "writing"
   prompt: string
   correctAnswer: string
   choices?: string[]

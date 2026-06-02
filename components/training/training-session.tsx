@@ -5,6 +5,8 @@ import { Flashcard } from "./flashcard"
 import { TranslationExercise } from "./translation-exercise"
 import { ClozeExercise } from "./cloze-exercise"
 import { ComprehensionExercise } from "./comprehension-exercise"
+import { WritingExercise } from "./writing-exercise"
+import { FeedbackCard } from "./feedback-card"
 import { TrainReader } from "@/lib/training/trainer-reader"
 import { TrainWriter } from "@/lib/training/trainer-writer"
 import { TrainSpeaker } from "@/lib/training/trainer-speaker"
@@ -38,6 +40,8 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
   const [submitting, setSubmitting] = useState(false)
   const [aiFeedback, setAiFeedback] = useState("")
   const [aiCorrection, setAiCorrection] = useState("")
+  const [aiScore, setAiScore] = useState<"pass" | "needs_improvement" | "fail" | null>(null)
+  const [betterExpression, setBetterExpression] = useState("")
   const [savedSession, setSavedSession] = useState<SavedSession | null>(null)
   const [showResume, setShowResume] = useState(false)
 
@@ -49,9 +53,14 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
       const raw = localStorage.getItem(SAVED_KEY)
       if (raw) {
         const saved: SavedSession = JSON.parse(raw)
-        if (saved.category === category && saved.questions?.length > 0 && saved.currentIndex < saved.questions.length) {
+        // 仅当 category 匹配 且 题目存在 且 未过期（<2小时）时恢复
+        const isFresh = Date.now() - saved.timestamp < 2 * 60 * 60 * 1000
+        if (saved.category === category && saved.questions?.length > 0 && saved.currentIndex < saved.questions.length && isFresh) {
           setSavedSession(saved)
           setShowResume(true)
+        } else {
+          // 清除不兼容或过期的会话
+          localStorage.removeItem(SAVED_KEY)
         }
       }
     } catch {}
@@ -104,6 +113,10 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
   const advanceQuestion = useCallback(() => {
     setFeedback(null)
     setSubmitting(false)
+    setAiFeedback("")
+    setAiCorrection("")
+    setAiScore(null)
+    setBetterExpression("")
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(i => i + 1)
     } else {
@@ -116,6 +129,8 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
     setSubmitting(true)
     setAiFeedback("")
     setAiCorrection("")
+    setAiScore(null)
+    setBetterExpression("")
 
     const question = questions[currentIndex]
 
@@ -148,6 +163,8 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
         const evalData = await res.json()
         if (evalData.feedback) setAiFeedback(evalData.feedback)
         if (evalData.correction) setAiCorrection(evalData.correction)
+        if (evalData.better_expression) setBetterExpression(evalData.better_expression)
+        if (evalData.score) setAiScore(evalData.score)
       } catch {
         // AI 挂了不影响训练
       }
@@ -216,38 +233,31 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
 
       {!complete && (
         <>
-          {question.type === "flashcard" && <Flashcard key={question.id} question={question} onAnswer={handleAnswer} />}
-          {question.type === "translation" && <TranslationExercise key={question.id} question={question} onAnswer={handleAnswer} />}
-          {question.type === "cloze" && <ClozeExercise key={question.id} question={question} onAnswer={handleAnswer} />}
-          {question.type === "comprehension" && <ComprehensionExercise key={question.id} question={question} onAnswer={handleAnswer} />}
+          {category === "writing" ? (
+            /* 写作模式：所有题目都用 WritingExercise，确保始终有文本输入框 */
+            <WritingExercise key={question.id} question={question} onAnswer={handleAnswer} />
+          ) : (
+            /* 阅读/口语：按题目类型渲染对应组件 */
+            <>
+              {question.type === "flashcard" && <Flashcard key={question.id} question={question} onAnswer={handleAnswer} />}
+              {question.type === "translation" && <TranslationExercise key={question.id} question={question} onAnswer={handleAnswer} />}
+              {question.type === "cloze" && <ClozeExercise key={question.id} question={question} onAnswer={handleAnswer} />}
+              {question.type === "comprehension" && <ComprehensionExercise key={question.id} question={question} onAnswer={handleAnswer} />}
+            </>
+          )}
         </>
       )}
 
       {feedback && (
-        <div className={`py-4 px-6 rounded-lg ${
-          feedback === "correct" ? "bg-[#fdfaee] border-2 border-ink shadow-[3px_3px_0_#d4cfc4]" : "bg-white border-2 border-ink shadow-[3px_3px_0_#d4cfc4]"
-        }`}>
-          <p className="font-bold text-lg text-ink mb-1">
-            {feedback === "correct" ? "POW! Nailed it!" : feedback === "maybe" ? "HMM... Close!" : "NOPE! It'll come back soon."}
-          </p>
-
-          {/* AI 反馈 */}
-          {aiFeedback && (
-            <p className="text-sm text-body mb-2 leading-relaxed">{aiFeedback}</p>
-          )}
-          {aiCorrection && (
-            <p className="text-sm text-accent-brand mb-3 leading-relaxed italic">
-              Suggestion: {aiCorrection}
-            </p>
-          )}
-
-          <button
-            onClick={advanceQuestion}
-            className="bg-charcoal text-white font-bold text-sm py-2 px-8 rounded-md hover:bg-charcoal/90 transition-colors"
-          >
-            Next →
-          </button>
-        </div>
+        <FeedbackCard
+          feedback={feedback}
+          aiScore={aiScore}
+          aiFeedback={aiFeedback}
+          aiCorrection={aiCorrection}
+          betterExpression={betterExpression}
+          category={category}
+          onNext={advanceQuestion}
+        />
       )}
 
       {complete && (

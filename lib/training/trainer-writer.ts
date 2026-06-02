@@ -22,16 +22,17 @@ export class TrainWriter implements Trainer {
 
   private makeTranslationCN(vocab: Vocabulary): TrainingQuestion {
     return {
-      id: `${vocab.id}-w-tc`, vocabularyId: vocab.id, type: "translation",
-      prompt: `Translate to English: ${vocab.definition} (use: ${vocab.word})`,
+      id: `${vocab.id}-w-tc`, vocabularyId: vocab.id, type: "writing",
+      prompt: `Translate to English: ${vocab.definition}`,
       correctAnswer: vocab.example_sentence || `A sentence using "${vocab.word}"`,
+      context: `Target word: ${vocab.word}`,
       vocabulary: vocab,
     }
   }
 
   private makeSentenceBuilder(vocab: Vocabulary): TrainingQuestion {
     return {
-      id: `${vocab.id}-w-sb`, vocabularyId: vocab.id, type: "translation",
+      id: `${vocab.id}-w-sb`, vocabularyId: vocab.id, type: "writing",
       prompt: `Write an English sentence using "${vocab.word}"`,
       correctAnswer: vocab.example_sentence || vocab.word,
       vocabulary: vocab,
@@ -40,7 +41,7 @@ export class TrainWriter implements Trainer {
 
   private makeThemeWriting(vocab: Vocabulary): TrainingQuestion {
     return {
-      id: `${vocab.id}-w-tw`, vocabularyId: vocab.id, type: "comprehension",
+      id: `${vocab.id}-w-tw`, vocabularyId: vocab.id, type: "writing",
       prompt: `Write 2-3 English sentences about "${vocab.word} (${vocab.definition})"`,
       correctAnswer: vocab.example_sentence || "",
       vocabulary: vocab,
