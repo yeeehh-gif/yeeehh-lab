@@ -38,8 +38,17 @@ export async function GET(request: NextRequest) {
     vocabularyIds = [...vocabularyIds, ...errorVocabIds]
   }
 
-  // Also get new words: mastery=0, not in schedule, not in error_backlog
+  // Also get new words: mastery=0, not in any schedule, not in error_backlog
   if (vocabularyIds.length < limit) {
+    // 查出所有已有排程的词（不限日期），避免 mastery=0 但已有排程的词被重复捞起
+    const { data: allScheduled } = await supabase
+      .from("review_schedule")
+      .select("vocabulary_id")
+      .eq("user_id", user.id)
+
+    const scheduledIds = allScheduled?.map(s => s.vocabulary_id) || []
+    const excludeIds = [...new Set([...errorVocabIds, ...scheduledIds])]
+
     let query = supabase
       .from("vocabulary")
       .select("id")
@@ -48,14 +57,8 @@ export async function GET(request: NextRequest) {
       .eq("mastery_level", 0)
       .limit(limit - vocabularyIds.length)
 
-    // 排除已在错误回溯中的词（避免重复出现）
-    if (errorVocabIds.length) {
-      query = query.not("id", "in", `(${errorVocabIds.join(",")})`)
-    }
-
-    // 排除已有排程的词
-    if (vocabularyIds.length) {
-      query = query.not("id", "in", `(${vocabularyIds.join(",")})`)
+    if (excludeIds.length) {
+      query = query.not("id", "in", `(${excludeIds.join(",")})`)
     }
 
     const { data: newWords } = await query
