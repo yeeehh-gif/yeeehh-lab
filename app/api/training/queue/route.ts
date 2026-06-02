@@ -12,11 +12,12 @@ export async function GET(request: NextRequest) {
 
   const now = new Date().toISOString()
 
-  // Get vocabulary due for review via schedule
+  // Get vocabulary due for review via schedule（按类别过滤）
   const { data: schedule } = await supabase
     .from("review_schedule")
-    .select("vocabulary_id")
+    .select("vocabulary_id, vocabulary!inner(category)")
     .eq("user_id", user.id)
+    .eq("vocabulary.category", type)
     .lte("next_review_at", now)
     .order("next_review_at", { ascending: true })
     .limit(limit)

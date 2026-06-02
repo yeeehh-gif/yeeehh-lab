@@ -106,6 +106,10 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
     localStorage.removeItem(SAVED_KEY)
     setSavedSession(null)
     setShowResume(false)
+    setComplete(false)
+    setCurrentIndex(0)
+    setStats({ correct: 0, maybe: 0, wrong: 0 })
+    setFeedback(null)
     setLoading(true)
     fetchQueue()
   }
