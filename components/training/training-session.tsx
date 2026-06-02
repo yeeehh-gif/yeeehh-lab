@@ -121,10 +121,10 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
     setAiCorrection("")
     setAiScore(null)
     setBetterExpression("")
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(i => i + 1)
-    } else {
+    if (currentIndex >= questions.length - 1) {
       setComplete(true)
+    } else {
+      setCurrentIndex(i => i + 1)
     }
   }, [currentIndex, questions.length])
 
@@ -222,6 +222,12 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
   }
 
   const question = questions[currentIndex]
+
+  // 防御：题目索引越界时直接标记完成
+  if (!question) {
+    if (!complete) setComplete(true)
+    return <p className="text-faint text-sm text-center py-20">No more questions.</p>
+  }
 
   return (
     <div className="flex flex-col gap-6">
