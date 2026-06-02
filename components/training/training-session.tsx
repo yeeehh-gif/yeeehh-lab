@@ -128,7 +128,15 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
     }
   }, [currentIndex, questions.length])
 
-  async function handleAnswer(result: "correct" | "maybe" | "wrong", userAnswer?: string) {
+  /** 将 AI 评分映射为训练结果 */
+  function aiScoreToResult(score: string | null): "correct" | "maybe" | "wrong" | null {
+    if (score === "pass") return "correct"
+    if (score === "needs_improvement") return "maybe"
+    if (score === "fail") return "wrong"
+    return null
+  }
+
+  async function handleAnswer(localResult: "correct" | "maybe" | "wrong", userAnswer?: string) {
     if (submitting) return
     setSubmitting(true)
     setAiFeedback("")
@@ -138,19 +146,9 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
 
     const question = questions[currentIndex]
 
-    // 记录到数据库
-    await fetch("/api/training/record", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ vocabularyId: question.vocabularyId, trainingType: category, result }),
-    })
-
-    if (result !== "correct") {
-      await captureError({ vocabularyId: question.vocabularyId, errorType: category })
-    }
-
-    // AI 评估（非闪卡模式且有用户输入时）
-    if (userAnswer && question.type !== "flashcard") {
+    // ── 写作：先跑 AI 评估，用 AI 结果覆盖本地结果 ──
+    let finalResult = localResult
+    if (category === "writing" && userAnswer) {
       try {
         const res = await fetch("/api/training/evaluate", {
           method: "POST",
@@ -169,18 +167,54 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
         if (evalData.correction) setAiCorrection(evalData.correction)
         if (evalData.better_expression) setBetterExpression(evalData.better_expression)
         if (evalData.score) setAiScore(evalData.score)
+
+        // AI 结果覆盖本地结果：pass→correct, needs_improvement→maybe, fail→wrong
+        const aiResult = aiScoreToResult(evalData.score)
+        if (aiResult) finalResult = aiResult
       } catch {
-        // AI 挂了不影响训练
+        // AI 挂了用本地评估兜底
+      }
+    } else {
+      // 非写作：AI 评估不改变结果，仅用于展示反馈
+      if (userAnswer && question.type !== "flashcard") {
+        try {
+          const res = await fetch("/api/training/evaluate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              word: question.prompt,
+              correctAnswer: question.correctAnswer,
+              userAnswer,
+              questionType: question.type,
+              category,
+              exampleSentence: question.vocabulary.example_sentence || "",
+            }),
+          })
+          const evalData = await res.json()
+          if (evalData.feedback) setAiFeedback(evalData.feedback)
+          if (evalData.correction) setAiCorrection(evalData.correction)
+        } catch { /* AI 挂了不影响训练 */ }
       }
     }
 
+    // ── 用最终结果记录到数据库 ──
+    await fetch("/api/training/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vocabularyId: question.vocabularyId, trainingType: category, result: finalResult }),
+    })
+
+    if (finalResult !== "correct") {
+      await captureError({ vocabularyId: question.vocabularyId, errorType: category })
+    }
+
     setStats(prev => ({
-      correct: prev.correct + (result === "correct" ? 1 : 0),
-      maybe: prev.maybe + (result === "maybe" ? 1 : 0),
-      wrong: prev.wrong + (result === "wrong" ? 1 : 0),
+      correct: prev.correct + (finalResult === "correct" ? 1 : 0),
+      maybe: prev.maybe + (finalResult === "maybe" ? 1 : 0),
+      wrong: prev.wrong + (finalResult === "wrong" ? 1 : 0),
     }))
 
-    setFeedback(result)
+    setFeedback(finalResult)
   }
 
   // Show resume prompt
