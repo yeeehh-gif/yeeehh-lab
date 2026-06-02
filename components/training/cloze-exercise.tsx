@@ -19,7 +19,9 @@ export function ClozeExercise({
     const response = input.toLowerCase().trim()
     let result: "correct" | "maybe" | "wrong" = "wrong"
     if (response === correct) result = "correct"
-    else if (correct.includes(response) || response.includes(correct)) result = "maybe"
+    // 放宽匹配：有部分重叠或用户写了内容至少判 maybe，AI 评估会进一步判定
+    else if (response.length > 1 && (correct.includes(response) || response.includes(correct))) result = "maybe"
+    else if (response.length > 2) result = "maybe"
     setSubmitted(true)
     onAnswer(result, input)
   }

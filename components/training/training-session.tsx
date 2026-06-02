@@ -146,9 +146,9 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
 
     const question = questions[currentIndex]
 
-    // ── 写作：先跑 AI 评估，用 AI 结果覆盖本地结果 ──
+    // ── AI 评估：写作/阅读均用 AI 结果覆盖本地判定，闪卡除外（纯自评） ──
     let finalResult = localResult
-    if (category === "writing" && userAnswer) {
+    if (userAnswer && question.type !== "flashcard") {
       try {
         const res = await fetch("/api/training/evaluate", {
           method: "POST",
@@ -168,32 +168,12 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
         if (evalData.better_expression) setBetterExpression(evalData.better_expression)
         if (evalData.score) setAiScore(evalData.score)
 
-        // AI 结果覆盖本地结果：pass→correct, needs_improvement→maybe, fail→wrong
+        // AI 结果覆盖本地结果（写作和阅读通用）
+        // pass→correct, needs_improvement→maybe, fail→wrong
         const aiResult = aiScoreToResult(evalData.score)
         if (aiResult) finalResult = aiResult
       } catch {
         // AI 挂了用本地评估兜底
-      }
-    } else {
-      // 非写作：AI 评估不改变结果，仅用于展示反馈
-      if (userAnswer && question.type !== "flashcard") {
-        try {
-          const res = await fetch("/api/training/evaluate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              word: question.prompt,
-              correctAnswer: question.correctAnswer,
-              userAnswer,
-              questionType: question.type,
-              category,
-              exampleSentence: question.vocabulary.example_sentence || "",
-            }),
-          })
-          const evalData = await res.json()
-          if (evalData.feedback) setAiFeedback(evalData.feedback)
-          if (evalData.correction) setAiCorrection(evalData.correction)
-        } catch { /* AI 挂了不影响训练 */ }
       }
     }
 

@@ -33,19 +33,32 @@ export async function GET(request: NextRequest) {
     .lte("next_attempt_at", now)
     .limit(limit)
 
-  if (errors) {
-    vocabularyIds = [...vocabularyIds, ...errors.map(e => e.vocabulary_id)]
+  const errorVocabIds = errors?.map(e => e.vocabulary_id) || []
+  if (errorVocabIds.length) {
+    vocabularyIds = [...vocabularyIds, ...errorVocabIds]
   }
 
-  // Also get new words (not yet in schedule)
+  // Also get new words: mastery=0, not in schedule, not in error_backlog
   if (vocabularyIds.length < limit) {
-    const { data: newWords } = await supabase
+    let query = supabase
       .from("vocabulary")
       .select("id")
       .eq("user_id", user.id)
       .eq("category", type)
       .eq("mastery_level", 0)
       .limit(limit - vocabularyIds.length)
+
+    // 排除已在错误回溯中的词（避免重复出现）
+    if (errorVocabIds.length) {
+      query = query.not("id", "in", `(${errorVocabIds.join(",")})`)
+    }
+
+    // 排除已有排程的词
+    if (vocabularyIds.length) {
+      query = query.not("id", "in", `(${vocabularyIds.join(",")})`)
+    }
+
+    const { data: newWords } = await query
 
     if (newWords) {
       vocabularyIds = [...vocabularyIds, ...newWords.map(w => w.id)]
