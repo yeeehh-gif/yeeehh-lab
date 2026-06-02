@@ -10,7 +10,7 @@ import { FeedbackCard } from "./feedback-card"
 import { TrainReader } from "@/lib/training/trainer-reader"
 import { TrainWriter } from "@/lib/training/trainer-writer"
 import { TrainSpeaker } from "@/lib/training/trainer-speaker"
-import { captureError } from "@/lib/training/error-backlog"
+import { captureError, clearErrors } from "@/lib/training/error-backlog"
 import type { Trainer, TrainingQuestion } from "@/lib/training/types"
 import type { Vocabulary } from "@/types"
 
@@ -184,7 +184,10 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
       body: JSON.stringify({ vocabularyId: question.vocabularyId, trainingType: category, result: finalResult }),
     })
 
-    if (finalResult !== "correct") {
+    if (finalResult === "correct") {
+      // 答对时清除该词的错误回溯记录
+      await clearErrors({ vocabularyId: question.vocabularyId, errorType: category })
+    } else {
       await captureError({ vocabularyId: question.vocabularyId, errorType: category })
     }
 

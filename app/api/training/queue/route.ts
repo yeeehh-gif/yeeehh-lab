@@ -12,6 +12,29 @@ export async function GET(request: NextRequest) {
 
   const now = new Date().toISOString()
 
+  // ── 自动清理：删除已毕业词（review_count>=5）的遗留数据 ──
+  const { data: graduated } = await supabase
+    .from("review_schedule")
+    .select("vocabulary_id")
+    .eq("user_id", user.id)
+    .gte("review_count", 5)
+
+  if (graduated?.length) {
+    const graduatedIds = graduated.map(g => g.vocabulary_id)
+    // 清除对应的 error_backlog
+    await supabase
+      .from("error_backlog")
+      .delete()
+      .eq("user_id", user.id)
+      .in("vocabulary_id", graduatedIds)
+    // 删除已毕业的 review_schedule 条目
+    await supabase
+      .from("review_schedule")
+      .delete()
+      .eq("user_id", user.id)
+      .gte("review_count", 5)
+  }
+
   // Get vocabulary due for review via schedule（按类别过滤）
   const { data: schedule } = await supabase
     .from("review_schedule")

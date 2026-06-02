@@ -45,6 +45,23 @@ export async function captureError(params: {
   }
 }
 
+/** 答对时清除该词在 error_backlog 中的所有记录 */
+export async function clearErrors(params: {
+  vocabularyId: string
+  errorType: "reading" | "speaking" | "writing"
+}): Promise<void> {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  await supabase
+    .from("error_backlog")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("vocabulary_id", params.vocabularyId)
+    .eq("error_type", params.errorType)
+}
+
 export async function getDueErrors(type?: "reading" | "speaking" | "writing"): Promise<ErrorBacklog[]> {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
