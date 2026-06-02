@@ -136,6 +136,8 @@ export class TrainReader implements Trainer {
         return `The missing word has ${question.correctAnswer.length} letters`
       case "comprehension":
         return `The correct definition is ${question.correctAnswer.length} characters long`
+      default:
+        return `Try to recall this from memory.`
     }
   }
 }
