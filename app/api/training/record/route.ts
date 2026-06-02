@@ -26,18 +26,27 @@ export async function POST(request: NextRequest) {
     .maybeSingle()
 
   const currentIndex = currentSchedule?.review_count ?? 0
-  const { nextReviewAt, intervalDays, intervalIndex } = calculateNextReview(currentIndex, result)
+  const schedule = calculateNextReview(currentIndex, result)
 
-  // Upsert review schedule
-  await supabase
-    .from("review_schedule")
-    .upsert({
-      user_id: user.id,
-      vocabulary_id: vocabularyId,
-      next_review_at: nextReviewAt.toISOString(),
-      interval_days: intervalDays,
-      review_count: intervalIndex,
-    }, { onConflict: "user_id,vocabulary_id" })
+  if (schedule.graduated) {
+    // 完成全部艾宾浩斯周期，从复习队列中毕业
+    await supabase
+      .from("review_schedule")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("vocabulary_id", vocabularyId)
+  } else {
+    // 正常更新排程
+    await supabase
+      .from("review_schedule")
+      .upsert({
+        user_id: user.id,
+        vocabulary_id: vocabularyId,
+        next_review_at: schedule.nextReviewAt.toISOString(),
+        interval_days: schedule.intervalDays,
+        review_count: schedule.intervalIndex,
+      }, { onConflict: "user_id,vocabulary_id" })
+  }
 
   // Update mastery level
   const masteryDelta = result === "correct" ? 1 : result === "maybe" ? 0 : -1
@@ -48,7 +57,8 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     success: true,
-    nextReviewAt: nextReviewAt.toISOString(),
-    intervalDays,
+    graduated: schedule.graduated,
+    nextReviewAt: schedule.nextReviewAt.toISOString(),
+    intervalDays: schedule.intervalDays,
   })
 }
