@@ -57,7 +57,28 @@ async function extractWithDeepSeek(text: string): Promise<any[]> {
 }
 
 async function importToDb(supabase: any, userId: string, items: any[], source: string) {
-  const vocab = items.map((item: any) => ({
+  // 1. 去重：查出用户已有词汇，只导入不重复的
+  const importWords = items.map(i => i.word.trim().toLowerCase())
+  const { data: existing } = await supabase
+    .from("vocabulary")
+    .select("word")
+    .eq("user_id", userId)
+    .in("word", importWords.map(w => w.toLowerCase()))
+
+  const existingWords = new Set((existing || []).map((e: any) => e.word.toLowerCase()))
+  const newItems = items.filter(i => !existingWords.has(i.word.trim().toLowerCase()))
+  const skipped = items.length - newItems.length
+
+  if (newItems.length === 0) {
+    await supabase.from("import_sessions").insert({
+      user_id: userId, source,
+      items_found: items.length, items_imported: 0,
+    })
+    return { imported: 0, skipped }
+  }
+
+  // 2. 插入新词
+  const vocab = newItems.map((item: any) => ({
     user_id: userId,
     word: item.word,
     phonetic: item.phonetic || null,
@@ -73,13 +94,12 @@ async function importToDb(supabase: any, userId: string, items: any[], source: s
   if (error) throw new Error(error.message)
 
   await supabase.from("import_sessions").insert({
-    user_id: userId,
-    source,
+    user_id: userId, source,
     items_found: items.length,
-    items_imported: data?.length || items.length,
+    items_imported: data?.length || newItems.length,
   })
 
-  return data?.length || items.length
+  return { imported: data?.length || newItems.length, skipped }
 }
 
 export async function POST(request: Request) {
@@ -119,8 +139,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "No vocabulary could be extracted. Try pasting text directly." }, { status: 400 })
       }
 
-      const imported = await importToDb(supabase, user.id, allItems, "notebooklm")
-      return NextResponse.json({ extracted: allItems, imported })
+      const result = await importToDb(supabase, user.id, allItems, "notebooklm")
+      return NextResponse.json({ extracted: allItems, ...result })
     } catch (err: any) {
       return NextResponse.json({ error: err.message }, { status: 500 })
     }
@@ -130,8 +150,8 @@ export async function POST(request: Request) {
   if (body.text) {
     try {
       const items = await extractWithDeepSeek(body.text)
-      const imported = await importToDb(supabase, user.id, items, "paste")
-      return NextResponse.json({ extracted: items, imported })
+      const result = await importToDb(supabase, user.id, items, "paste")
+      return NextResponse.json({ extracted: items, ...result })
     } catch (err: any) {
       return NextResponse.json({ error: err.message }, { status: 500 })
     }
@@ -140,8 +160,8 @@ export async function POST(request: Request) {
   // Mode: Direct import from review list
   if (body.items) {
     try {
-      const imported = await importToDb(supabase, user.id, body.items, "notebooklm")
-      return NextResponse.json({ imported })
+      const result = await importToDb(supabase, user.id, body.items, "notebooklm")
+      return NextResponse.json({ ...result })
     } catch (err: any) {
       return NextResponse.json({ error: err.message }, { status: 500 })
     }
