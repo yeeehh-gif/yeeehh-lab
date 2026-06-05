@@ -16,7 +16,7 @@ For each item, return:
 - category: "reading" / "speaking" / "writing"
 
 Only include items worth learning. Skip basic words (the, a, is).
-Max 20 items. Return ONLY a JSON array, no markdown:
+Extract ALL useful vocabulary — no limit on the number of items. Return ONLY a JSON array, no markdown:
 
 [{"word":"ubiquitous","definition":"无处不在的","example_sentence":"The internet has become ubiquitous.","category":"reading"}]
 
@@ -26,7 +26,7 @@ Text:
 async function extractWithDeepSeek(text: string): Promise<any[]> {
   if (!DEEPSEEK_KEY) throw new Error("DEEPSEEK_API_KEY not configured")
 
-  const prompt = EXTRACTION_PROMPT.replace("{text}", text.slice(0, 10000))
+  const prompt = EXTRACTION_PROMPT.replace("{text}", text.slice(0, 50000))
   const res = await fetch(DEEPSEEK_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${DEEPSEEK_KEY}` },
@@ -37,7 +37,7 @@ async function extractWithDeepSeek(text: string): Promise<any[]> {
         { role: "user", content: prompt },
       ],
       temperature: 0.2,
-      max_tokens: 4096,
+      max_tokens: 16384,
     }),
   })
 
