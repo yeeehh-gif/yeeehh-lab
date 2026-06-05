@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button"
 
 const CATEGORIES = ["reading", "speaking", "writing"] as const
 
+interface DupGroup {
+  word: string
+  items: Vocabulary[]
+}
+
 export function WordTable() {
   const [words, setWords] = useState<Vocabulary[]>([])
   const [search, setSearch] = useState("")
@@ -15,6 +20,12 @@ export function WordTable() {
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [editingCategory, setEditingCategory] = useState<string | null>(null)
+
+  // 重复词状态
+  const [duplicates, setDuplicates] = useState<DupGroup[]>([])
+  const [showDupPanel, setShowDupPanel] = useState(false)
+  const [checkedDupIds, setCheckedDupIds] = useState<Set<string>>(new Set())
+  const [batchDeleting, setBatchDeleting] = useState(false)
 
   useEffect(() => { loadWords() }, [search, filter])
 
@@ -44,6 +55,73 @@ export function WordTable() {
     setEditingCategory(null)
   }
 
+  // 扫描重复词
+  async function scanDuplicates() {
+    const supabase = createClient()
+    const { data } = await supabase.from("vocabulary").select("*").order("created_at", { ascending: true })
+    if (!data) return
+
+    // 按小写 word 分组，每组 >1 条即重复
+    const groups = new Map<string, Vocabulary[]>()
+    for (const w of data) {
+      const key = w.word.toLowerCase().trim()
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key)!.push(w)
+    }
+
+    const dups: DupGroup[] = []
+    for (const [word, items] of groups) {
+      if (items.length > 1) dups.push({ word, items })
+    }
+
+    setDuplicates(dups)
+    setShowDupPanel(true)
+    // 默认选中每组的第 2 条及以后（保留最早的一条）
+    const ids = new Set<string>()
+    for (const d of dups) {
+      for (let i = 1; i < d.items.length; i++) ids.add(d.items[i].id)
+    }
+    setCheckedDupIds(ids)
+  }
+
+  function toggleDupCheck(id: string) {
+    setCheckedDupIds(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  function toggleDupGroup(group: DupGroup) {
+    setCheckedDupIds(prev => {
+      const next = new Set(prev)
+      const allChecked = group.items.every(i => next.has(i.id))
+      for (const i of group.items) {
+        allChecked ? next.delete(i.id) : next.add(i.id)
+      }
+      return next
+    })
+  }
+
+  async function batchDeleteDuplicates() {
+    if (checkedDupIds.size === 0) return
+    setBatchDeleting(true)
+    const ids = [...checkedDupIds]
+    const supabase = createClient()
+
+    // 批量删除（分批 50 条）
+    for (let i = 0; i < ids.length; i += 50) {
+      const batch = ids.slice(i, i + 50)
+      await supabase.from("vocabulary").delete().in("id", batch)
+    }
+
+    setWords(prev => prev.filter(w => !checkedDupIds.has(w.id)))
+    setDuplicates([])
+    setShowDupPanel(false)
+    setCheckedDupIds(new Set())
+    setBatchDeleting(false)
+  }
+
   if (loading) return <p className="text-faint text-sm">Loading...</p>
 
   return (
@@ -68,8 +146,83 @@ export function WordTable() {
             </Button>
           ))}
         </div>
-        <span className="font-mono text-xs text-faint ml-auto">{words.length} words</span>
+
+        {/* 查重按钮 */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={scanDuplicates}
+          className="text-amber-700 border-amber-300 hover:bg-amber-50 ml-auto"
+        >
+          Find duplicates
+        </Button>
+        <span className="font-mono text-xs text-faint">{words.length} words</span>
       </div>
+
+      {/* 重复词面板 */}
+      {showDupPanel && (
+        <div className="border-2 border-amber-300 bg-amber-50 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="font-bold text-amber-800">
+              {duplicates.length === 0
+                ? "No duplicates found! 🎉"
+                : `Found ${duplicates.length} duplicate group${duplicates.length > 1 ? "s" : ""} (${[...checkedDupIds].length} selected)`}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => { setShowDupPanel(false); setDuplicates([]) }}>
+                Dismiss
+              </Button>
+              {checkedDupIds.size > 0 && (
+                <Button
+                  size="sm"
+                  onClick={batchDeleteDuplicates}
+                  disabled={batchDeleting}
+                  className="bg-red-600 text-white hover:bg-red-700"
+                >
+                  {batchDeleting ? "Deleting..." : `Delete ${checkedDupIds.size} selected`}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {duplicates.map((group) => (
+            <div key={group.word} className="border border-amber-200 bg-white rounded-md mb-2 last:mb-0 overflow-hidden">
+              <button
+                onClick={() => toggleDupGroup(group)}
+                className="w-full text-left px-3 py-2 bg-amber-100/50 hover:bg-amber-100 text-xs font-semibold text-amber-900 flex items-center gap-2"
+              >
+                <input
+                  type="checkbox"
+                  checked={group.items.every(i => checkedDupIds.has(i.id))}
+                  readOnly
+                  className="w-3.5 h-3.5 accent-amber-700"
+                />
+                &ldquo;{group.word}&rdquo; — {group.items.length} entries
+              </button>
+              {group.items.map((item, idx) => (
+                <label
+                  key={item.id}
+                  className={`flex items-center gap-3 px-4 py-2 text-sm border-b border-rule last:border-0 cursor-pointer hover:bg-[#fdfdfb] ${
+                    checkedDupIds.has(item.id) ? "bg-red-50/50" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checkedDupIds.has(item.id)}
+                    onChange={() => toggleDupCheck(item.id)}
+                    className="w-3.5 h-3.5 accent-amber-700"
+                  />
+                  <span className="font-semibold text-ink w-28 truncate">{item.word}</span>
+                  <span className="text-body truncate flex-1">{item.definition}</span>
+                  <span className="font-mono text-[10px] text-faint bg-[#f2f5f8] px-2 py-0.5 rounded-sm">{item.category.toUpperCase()}</span>
+                  <span className="font-mono text-xs text-faint">m:{item.mastery_level}</span>
+                  <span className="text-[10px] text-faint">{idx === 0 ? "(kept)" : ""}</span>
+                </label>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="border border-rule rounded-md overflow-hidden">
         <table className="w-full text-sm">
