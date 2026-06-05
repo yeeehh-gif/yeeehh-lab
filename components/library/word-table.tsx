@@ -6,26 +6,42 @@ import type { Vocabulary } from "@/types"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
+const CATEGORIES = ["reading", "speaking", "writing"] as const
+
 export function WordTable() {
   const [words, setWords] = useState<Vocabulary[]>([])
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState<"all" | "reading" | "speaking" | "writing">("all")
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState<string | null>(null)
+  const [editingCategory, setEditingCategory] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadWords()
-  }, [search, filter])
+  useEffect(() => { loadWords() }, [search, filter])
 
   async function loadWords() {
     const supabase = createClient()
     let query = supabase.from("vocabulary").select("*").order("created_at", { ascending: false })
-
     if (search) query = query.ilike("word", `%${search}%`)
     if (filter !== "all") query = query.eq("category", filter)
-
     const { data } = await query
     setWords(data || [])
     setLoading(false)
+  }
+
+  async function handleDelete(id: string) {
+    if (deleting) return
+    setDeleting(id)
+    const supabase = createClient()
+    await supabase.from("vocabulary").delete().eq("id", id)
+    setWords(prev => prev.filter(w => w.id !== id))
+    setDeleting(null)
+  }
+
+  async function handleCategoryChange(id: string, newCategory: string) {
+    const supabase = createClient()
+    await supabase.from("vocabulary").update({ category: newCategory }).eq("id", id)
+    setWords(prev => prev.map(w => w.id === id ? { ...w, category: newCategory as Vocabulary["category"] } : w))
+    setEditingCategory(null)
   }
 
   if (loading) return <p className="text-faint text-sm">Loading...</p>
@@ -40,7 +56,7 @@ export function WordTable() {
           className="max-w-[260px]"
         />
         <div className="flex gap-2">
-          {(["all", "reading", "speaking", "writing"] as const).map((f) => (
+          {(["all", ...CATEGORIES] as const).map((f) => (
             <Button
               key={f}
               variant={filter === f ? "default" : "outline"}
@@ -64,6 +80,7 @@ export function WordTable() {
               <th className="text-left p-4 font-semibold text-ink">Category</th>
               <th className="text-left p-4 font-semibold text-ink">Mastery</th>
               <th className="text-left p-4 font-semibold text-ink">Source</th>
+              <th className="text-right p-4 font-semibold text-ink w-16"></th>
             </tr>
           </thead>
           <tbody>
@@ -77,9 +94,27 @@ export function WordTable() {
                 </td>
                 <td className="p-4 text-body">{w.definition}</td>
                 <td className="p-4">
-                  <span className="font-mono text-[10px] font-medium px-[10px] py-1 rounded-sm tracking-wider bg-[#f2f5f8] text-[#4a7090]">
-                    {w.category.toUpperCase()}
-                  </span>
+                  {editingCategory === w.id ? (
+                    <select
+                      value={w.category}
+                      onChange={(e) => handleCategoryChange(w.id, e.target.value)}
+                      onBlur={() => setEditingCategory(null)}
+                      autoFocus
+                      className="text-[10px] font-medium px-2 py-1 rounded-sm border border-rule bg-white focus:outline-none focus:border-charcoal"
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c} value={c}>{c.toUpperCase()}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <button
+                      onClick={() => setEditingCategory(w.id)}
+                      className="font-mono text-[10px] font-medium px-[10px] py-1 rounded-sm tracking-wider bg-[#f2f5f8] text-[#4a7090] hover:bg-[#e2e8f0] cursor-pointer transition-colors"
+                      title="Click to change category"
+                    >
+                      {w.category.toUpperCase()}
+                    </button>
+                  )}
                 </td>
                 <td className="p-4">
                   <div className="flex items-center gap-2">
@@ -93,6 +128,16 @@ export function WordTable() {
                   </div>
                 </td>
                 <td className="p-4 text-faint text-xs">{w.source_note || "—"}</td>
+                <td className="p-4 text-right">
+                  <button
+                    onClick={() => handleDelete(w.id)}
+                    disabled={deleting === w.id}
+                    className="text-faint hover:text-red-600 disabled:opacity-30 transition-colors text-xs font-medium"
+                    title="Delete word"
+                  >
+                    {deleting === w.id ? "..." : "✕"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

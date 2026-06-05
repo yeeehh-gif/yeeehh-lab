@@ -22,17 +22,34 @@ export function WordForm({ onSaved }: { onSaved: () => void }) {
   const [exampleSentence, setExampleSentence] = useState("")
   const [category, setCategory] = useState<"reading" | "speaking" | "writing">("reading")
   const [sourceNote, setSourceNote] = useState("")
+  const [error, setError] = useState("")
+  const [saving, setSaving] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setError("")
+    setSaving(true)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) { setSaving(false); return }
 
-    await supabase.from("vocabulary").insert({
+    // 去重检查：不区分大小写
+    const { data: existing } = await supabase
+      .from("vocabulary")
+      .select("id, word")
+      .eq("user_id", user.id)
+      .ilike("word", word.trim())
+
+    if (existing && existing.length > 0) {
+      setError(`"${existing[0].word}" already exists in your library`)
+      setSaving(false)
+      return
+    }
+
+    const { error: insertErr } = await supabase.from("vocabulary").insert({
       user_id: user.id,
-      word,
-      definition,
+      word: word.trim(),
+      definition: definition.trim(),
       phonetic: phonetic || null,
       part_of_speech: partOfSpeech || null,
       example_sentence: exampleSentence || null,
@@ -40,9 +57,12 @@ export function WordForm({ onSaved }: { onSaved: () => void }) {
       source_note: sourceNote || null,
     })
 
+    if (insertErr) { setError(insertErr.message); setSaving(false); return }
+
     setOpen(false)
     setWord(""); setDefinition(""); setPhonetic(""); setPartOfSpeech("")
-    setExampleSentence(""); setSourceNote("")
+    setExampleSentence(""); setSourceNote(""); setError("")
+    setSaving(false)
     onSaved()
   }
 
@@ -105,7 +125,12 @@ export function WordForm({ onSaved }: { onSaved: () => void }) {
             <Label>Source note</Label>
             <Input value={sourceNote} onChange={(e) => setSourceNote(e.target.value)} placeholder="Unit 3 · Technology" />
           </div>
-          <Button type="submit" className="w-full bg-charcoal text-white">Save word</Button>
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-3">{error}</p>
+          )}
+          <Button type="submit" className="w-full bg-charcoal text-white" disabled={saving}>
+            {saving ? "Saving..." : "Save word"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
