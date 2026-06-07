@@ -27,11 +27,11 @@ export function FeedbackCard({
   category: string
   onNext: () => void
 }) {
-  const isWriting = category === "writing"
+  const isWritingOrSpeaking = category === "writing" || category === "speaking"
 
   const getScoreMeta = () => {
-    if (isWriting) {
-      // Writing 专属三级评分
+    if (isWritingOrSpeaking) {
+      // Writing/Speaking 专属三级评分
       if (aiScore === "pass") {
         return { label: "通过！", sub: "语法正确，表达自然", bg: "bg-green-50", border: "border-green-600", text: "text-green-800" }
       }
@@ -77,8 +77,8 @@ export function FeedbackCard({
         <p className="text-sm text-body mb-2 leading-relaxed">{aiFeedback}</p>
       )}
 
-      {/* Writing 更优表达 — 始终展示 */}
-      {isWriting && betterExpression && (
+      {/* Writing/Speaking 更优表达 — 始终展示 */}
+      {isWritingOrSpeaking && betterExpression && (
         <div className="bg-white/60 border border-rule rounded-lg p-3 mb-3">
           <p className="text-[10px] font-semibold text-faint tracking-[1px] uppercase mb-1">
             Better expression
@@ -90,7 +90,7 @@ export function FeedbackCard({
       )}
 
       {/* 非写作的通用 suggestion */}
-      {!isWriting && aiCorrection && (
+      {!isWritingOrSpeaking && aiCorrection && (
         <p className="text-sm text-accent-brand mb-3 leading-relaxed italic">
           Suggestion: {aiCorrection}
         </p>

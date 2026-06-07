@@ -62,6 +62,29 @@ Evaluate the answer carefully:
 1. Check grammar correctness (tenses, agreement, word order, articles, prepositions, etc.)
 2. Check naturalness (does it sound like native English, or is it awkward/translated?)
 3. Provide a better_expression that is both grammatically correct and natural-sounding.`
+    } else if (category === "speaking") {
+      // 口语评估：发音/流利度/自然度 + 更优表达
+      systemPrompt = `You are an English speaking coach. Evaluate the student's spoken answer (transcribed from speech).
+Always respond in this exact JSON format (no markdown, no other text):
+{"score":"pass|needs_improvement|fail","feedback":"Your constructive feedback in Chinese (2-3 sentences)","better_expression":"A more natural/fluent English version of the student's answer","highlights":["good point or area to improve"]}
+
+Scoring criteria:
+- "pass": Grammar correct, expression sounds natural AND fluent (like spoken English, not written/formal). Target word used correctly.
+- "needs_improvement": Grammar correct but expression sounds stiff, written-style, or awkward when spoken aloud.
+- "fail": Grammar errors, or didn't use the target word, or answer is nonsensical.
+
+CRITICAL: Always provide a "better_expression" field — a version that sounds natural when SPOKEN (conversational, not formal written English). If the answer is already perfect, provide a slight variation.`
+      userPrompt = `Task: Speak in English
+Prompt: ${word}
+Reference answer: ${correctAnswer}
+Student's spoken answer (speech-to-text transcript): ${userAnswer}
+
+Evaluate the answer:
+1. Grammar correctness
+2. Naturalness for SPOKEN English (conversational tone, not stiff/formal)
+3. Fluency — does it sound like natural speech?
+4. Correct use of target word/phrase
+5. Provide a better_expression that sounds natural when spoken aloud.`
     } else if (questionType === "comprehension") {
       // 选择题评估保持不变（已经由前端判断）
       systemPrompt = `You evaluate multiple-choice comprehension answers. Respond ONLY with JSON: {"score":"correct|wrong"}`

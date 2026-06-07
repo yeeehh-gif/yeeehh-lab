@@ -6,6 +6,7 @@ import { TranslationExercise } from "./translation-exercise"
 import { ClozeExercise } from "./cloze-exercise"
 import { ComprehensionExercise } from "./comprehension-exercise"
 import { WritingExercise } from "./writing-exercise"
+import { SpeakingExercise } from "./speaking-exercise"
 import { FeedbackCard } from "./feedback-card"
 import { TrainReader } from "@/lib/training/trainer-reader"
 import { TrainWriter } from "@/lib/training/trainer-writer"
@@ -261,10 +262,11 @@ export function TrainingSession({ category }: { category: "reading" | "writing" 
       {!complete && (
         <>
           {category === "writing" ? (
-            /* 写作模式：所有题目都用 WritingExercise，确保始终有文本输入框 */
             <WritingExercise key={question.id} question={question} onAnswer={handleAnswer} />
+          ) : category === "speaking" ? (
+            <SpeakingExercise key={question.id} question={question} onAnswer={handleAnswer} />
           ) : (
-            /* 阅读/口语：按题目类型渲染对应组件 */
+            /* 阅读模式：按题目类型渲染对应组件 */
             <>
               {question.type === "flashcard" && <Flashcard key={question.id} question={question} onAnswer={handleAnswer} />}
               {question.type === "translation" && <TranslationExercise key={question.id} question={question} onAnswer={handleAnswer} />}

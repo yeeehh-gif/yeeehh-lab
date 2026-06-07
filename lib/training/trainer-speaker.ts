@@ -22,8 +22,8 @@ export class TrainSpeaker implements Trainer {
 
   private makeShadow(vocab: Vocabulary): TrainingQuestion {
     return {
-      id: `${vocab.id}-s-sh`, vocabularyId: vocab.id, type: "flashcard",
-      prompt: `Read this aloud with correct pronunciation:\n\n"${vocab.example_sentence || vocab.word}"`,
+      id: `${vocab.id}-s-sh`, vocabularyId: vocab.id, type: "speaking",
+      prompt: `Read this aloud with correct pronunciation: "${vocab.example_sentence || vocab.word}"`,
       correctAnswer: vocab.example_sentence || vocab.word,
       vocabulary: vocab,
     }
@@ -33,7 +33,7 @@ export class TrainSpeaker implements Trainer {
     const scenarios = ["Ordering coffee", "Discussing work", "Asking for directions", "Casual chat with friends", "Business meeting"]
     const scenario = scenarios[Math.floor(Math.random() * scenarios.length)]
     return {
-      id: `${vocab.id}-s-sc`, vocabularyId: vocab.id, type: "comprehension",
+      id: `${vocab.id}-s-sc`, vocabularyId: vocab.id, type: "speaking",
       prompt: `Scenario: ${scenario}. Say a natural English sentence using "${vocab.word} (${vocab.definition})".`,
       correctAnswer: vocab.example_sentence || vocab.word,
       vocabulary: vocab,
@@ -42,8 +42,8 @@ export class TrainSpeaker implements Trainer {
 
   private makeTranslateSpeak(vocab: Vocabulary): TrainingQuestion {
     return {
-      id: `${vocab.id}-s-ts`, vocabularyId: vocab.id, type: "translation",
-      prompt: `See this meaning, say it in English: ${vocab.definition}`,
+      id: `${vocab.id}-s-ts`, vocabularyId: vocab.id, type: "speaking",
+      prompt: `Say it in English: ${vocab.definition}`,
       correctAnswer: vocab.word,
       vocabulary: vocab,
     }
