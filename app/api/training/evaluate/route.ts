@@ -52,7 +52,11 @@ Scoring criteria (strict):
 - "needs_improvement": Grammar is CORRECT but expression is AWKWARD/UNNATURAL. The sentence is grammatically valid but sounds stiff, translated, or not idiomatic.
 - "fail": Grammar has ERRORS (tense, agreement, word order, missing articles, wrong prepositions, etc.)
 
-CRITICAL: Always provide a "better_expression" field — a rewritten version that is grammatically correct AND natural/idiomatic. If the answer is already perfect, provide a slight stylistic variation. If the answer has grammar errors, provide the corrected version. If the answer is grammatical but awkward, provide the natural version.`
+CRITICAL: You MUST always provide a "better_expression" field. Never leave it empty.
+- If the answer is already perfect (pass): provide a slightly different but equally natural version.
+- If the answer is grammatical but awkward (needs_improvement): provide the more natural way a native speaker would say it.
+- If the answer has grammar errors (fail): provide the CORRECTED version with proper grammar.
+- The better_expression MUST be a real, natural English sentence — never empty.`
       userPrompt = `Task: Write in English
 Prompt: ${word}
 Reference answer: ${correctAnswer}

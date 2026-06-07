@@ -62,6 +62,7 @@ export function SpeakingExercise({
   const [answer, setAnswer] = useState("")
 
   const recognitionRef = useRef<InstanceType<typeof SpeechRecognition> | null>(null)
+  const listeningRef = useRef(false) // 用于 onend 闭包读取最新状态
   const isSupported = typeof window !== "undefined" &&
     ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
 
@@ -92,12 +93,17 @@ export function SpeakingExercise({
 
     rec.onerror = (event: Event) => {
       const e = event as SpeechRecognitionErrorEvent
+      // 忽略静默和中断错误，不停止监听
       if (e.error === "no-speech" || e.error === "aborted") return
-      setIsListening(false)
+      console.warn("Speech recognition error:", e.error)
     }
 
     rec.onend = () => {
-      setIsListening(false)
+      // 自动续播：用户未手动停止时，silence 超时后自动重启识别
+      // 通过 recognitionRef 判断是否还在监听状态
+      if (recognitionRef.current && listeningRef.current) {
+        try { rec.start() } catch { /* 已在运行则忽略 */ }
+      }
     }
 
     recognitionRef.current = rec
@@ -107,13 +113,17 @@ export function SpeakingExercise({
   // 清理
   useEffect(() => {
     return () => {
+      listeningRef.current = false
       recognitionRef.current?.abort()
     }
   }, [])
 
   // 切换 mode 时重置
   function switchMode(m: "voice" | "text") {
-    if (isListening) recognitionRef.current?.stop()
+    if (isListening) {
+      listeningRef.current = false
+      recognitionRef.current?.stop()
+    }
     setMode(m)
     setTranscript("")
     setTextInput("")
@@ -124,9 +134,11 @@ export function SpeakingExercise({
     const rec = getRecognition()
     if (!rec) return
     if (isListening) {
+      listeningRef.current = false
       rec.stop()
       setIsListening(false)
     } else {
+      listeningRef.current = true
       setTranscript("")
       rec.start()
       setIsListening(true)
